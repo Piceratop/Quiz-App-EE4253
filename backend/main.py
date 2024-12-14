@@ -13,7 +13,7 @@ mydb = mysql.connector.connect(
     port=3306
 )
 
-class MyRequestHandler(http.server.SimpleHTTPRequestHandler):
+class QuizAppRequestHandler(http.server.SimpleHTTPRequestHandler):
     def do_GET(self):
         if self.path == "/api/questions":
             self.send_response(200)
@@ -23,7 +23,7 @@ class MyRequestHandler(http.server.SimpleHTTPRequestHandler):
             questions = mycursor.fetchall()
             self.wfile.write(json.dumps(questions).encode())
 
-with socketserver.TCPServer(("", PORT), MyRequestHandler) as httpd:
+with socketserver.TCPServer(("", PORT), QuizAppRequestHandler) as httpd:
     print("Server started at http://localhost:" + str(PORT))
     httpd.serve_forever()
 
