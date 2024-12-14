@@ -1,7 +1,14 @@
-import React from "react";
+import { BrowserRouter } from "react-router-dom";
+import Header from "./components/Header";
+import Quiz from "./components/Quiz";
 
 const App = () => {
-   return <div>App</div>;
+   return (
+      <BrowserRouter>
+         <Header />
+         <Quiz />
+      </BrowserRouter>
+   );
 };
 
 export default App;
