@@ -7,8 +7,8 @@ PORT = 8000
 mydb = mysql.connector.connect(
   host="localhost",
   user="root",
-  passwd="",
-  database="quiz-app",
+  passwd="Subsonic-Framing8-Monsieur-Lash",
+  database="quiz_app",
   port=3306
 )
 
