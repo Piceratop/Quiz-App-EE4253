@@ -4,10 +4,12 @@ import Quiz from "./components/Quiz";
 
 const App = () => {
    return (
-      <BrowserRouter>
-         <Header />
-         <Quiz />
-      </BrowserRouter>
+      <div className="bg-background text-primary">
+         <BrowserRouter>
+            <Header />
+            <Quiz />
+         </BrowserRouter>
+      </div>
    );
 };
 

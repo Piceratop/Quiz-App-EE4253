@@ -4,8 +4,7 @@ import Create from "./Create";
 
 function Quiz() {
    return (
-      <main>
-         <h1>Quiz App</h1>
+      <main className="py-4 px-12">
          <Routes>
             <Route path="/" element={<Explore />} />
             <Route path="/create" element={<Create />} />

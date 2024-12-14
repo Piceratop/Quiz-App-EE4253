@@ -1,5 +1,9 @@
 function Create() {
-   return <div>Create</div>;
+   return (
+      <div>
+         <h2 className="page-title">Create</h2>
+      </div>
+   );
 }
 
 export default Create;

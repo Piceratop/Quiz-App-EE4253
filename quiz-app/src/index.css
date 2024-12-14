@@ -2,8 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-* {
-   margin: 0;
-   padding: 0;
-   box-sizing: border-box;
+.page-title {
+   @apply text-2xl font-bold;
 }
