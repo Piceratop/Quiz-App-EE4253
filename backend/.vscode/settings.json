@@ -13,6 +13,20 @@
          "database": "quiz_app",
          "username": "root",
          "password": "Subsonic-Framing8-Monsieur-Lash"
+      },
+      {
+         "mysqlOptions": {
+            "authProtocol": "default",
+            "enableSsl": "Disabled"
+         },
+         "previewLimit": 50,
+         "server": "localhost",
+         "port": 3306,
+         "driver": "MySQL",
+         "name": "quiz_app",
+         "database": "quiz_app",
+         "username": "root",
+         "password": "Subsonic-Framing8-Monsieur-Lash"
       }
    ]
 }

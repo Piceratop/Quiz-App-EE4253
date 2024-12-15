@@ -8,7 +8,7 @@ function Header() {
             <ul className="flex space-x-8 text-lg">
                <li>
                   <Link
-                     className="px-1 py-1 transition duration-500 ease-in-out hover:border-b-2 hover:border-accent"
+                     className="px-1 py-1 transition duration-500 ease-in-out hover:border-b-2 hover:border-primary"
                      to="/"
                   >
                      Explore
@@ -16,7 +16,7 @@ function Header() {
                </li>
                <li>
                   <Link
-                     className="px-1 py-1 transition duration-500 ease-in-out hover:border-b-2 hover:border-accent"
+                     className="px-1 py-1 transition duration-500 ease-in-out hover:border-b-2 hover:border-primary"
                      to="/create"
                   >
                      Create
