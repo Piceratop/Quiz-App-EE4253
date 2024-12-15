@@ -43,10 +43,8 @@ function QuestionBox({ question, type, choices }) {
             >
                {choiceArray.map((choice) => (
                   <label
-                     className={`flex items-center justify-center py-8 px-4 border border-primary text-center ${
-                        userChoice === choice
-                           ? "bg-secondary text-background"
-                           : ""
+                     className={`flex items-center justify-center py-8 px-4 border border-primary text-center transition duration-500 ease-in-out ${
+                        userChoice === choice ? "bg-secondary font-bold" : ""
                      }`}
                      key={choice}
                   >
