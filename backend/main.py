@@ -22,10 +22,10 @@ class QuizAppRequestHandler(http.server.SimpleHTTPRequestHandler):
             self.end_headers()
             mycursor = mydb.cursor()
             if self.path == "/api/questions":
-                mycursor.execute("SELECT * FROM questions")
+                mycursor.execute("SELECT * FROM Questions ORDER BY id DESC")
             else:
                 page = int(self.path.split("=")[1])
-                mycursor.execute(f"SELECT * FROM questions LIMIT {(page - 1) * 5}, 5")
+                mycursor.execute(f"SELECT * FROM Questions ORDER BY id DESC LIMIT {(page - 1) * 5}, 5")
             questions = mycursor.fetchall()
             questions_dict = {}
             for question in questions:
