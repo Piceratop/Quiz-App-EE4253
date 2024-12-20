@@ -34,7 +34,7 @@ export default function QuestionBox({
       return (
          <form className="my-6">
             <div className="my-2 border-primary border-2 transition duration-500 ease-in-out">
-               <div className="text-xl flex items-center justify-center py-12 px-4">
+               <div className="text-2xl flex items-center justify-center py-12 px-4">
                   <p>{question}</p>
                </div>
                <button
@@ -66,7 +66,7 @@ export default function QuestionBox({
             >
                {choiceArray.map((choice) => (
                   <label
-                     className={`flex items-center justify-center py-8 px-4 border border-primary text-center transition duration-500 ease-in-out ${
+                     className={`flex items-center justify-center py-8 px-4 border border-primary text-center text-lg transition duration-500 ease-in-out ${
                         isSubmitted
                            ? choice === correctAnswer
                               ? "bg-primary text-background"

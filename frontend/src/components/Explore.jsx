@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import apiClient from "../configs/apiClient";
 import QuestionBox from "./questions/QuestionBox";
 
@@ -13,9 +14,24 @@ async function getQuestions(page) {
    return response.data;
 }
 
+async function getQuestionsCount(page) {
+   const response = await apiClient.get("/questions/count");
+   return response.data.count;
+}
+
 function Explore() {
    const [page, setPage] = useState(1);
+   const [totalPage, setTotalPage] = useState(1);
    const [questions, setQuestions] = useState({});
+
+   useEffect(() => {
+      const fetchQuestionsCount = async () => {
+         const data = await getQuestionsCount(page);
+         setTotalPage(Math.ceil(data / 5));
+      };
+
+      fetchQuestionsCount();
+   });
 
    useEffect(() => {
       const fetchQuestions = async (page) => {
@@ -24,7 +40,7 @@ function Explore() {
       };
 
       fetchQuestions(page);
-   }, []);
+   }, [page]);
 
    return (
       <div>
@@ -42,6 +58,29 @@ function Explore() {
                   type={question.question_type}
                />
             ))}
+         <div className="mt-4 flex justify-center items-center">
+            <button
+               className="mr-2 p-4 text-xl rounded-full border-2 border-primary"
+               onClick={() =>
+                  setPage((prevPage) => (prevPage > 1 ? prevPage - 1 : 1))
+               }
+            >
+               <FaArrowLeft />
+            </button>
+            <p className="mx-2 text-xl">
+               {page} / {totalPage}
+            </p>
+            <button
+               className="ml-2 p-4 text-xl rounded-full border-2 border-primary"
+               onClick={() =>
+                  setPage((prevPage) =>
+                     prevPage < totalPage ? prevPage + 1 : prevPage
+                  )
+               }
+            >
+               <FaArrowRight />
+            </button>
+         </div>
       </div>
    );
 }
