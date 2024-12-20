@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { FaCheckCircle, FaPlus, FaTrash } from "react-icons/fa";
+import {
+   FaCheckCircle,
+   FaPlus,
+   FaRegSquare,
+   FaTrash,
+   FaCheckSquare,
+} from "react-icons/fa";
 import apiClient from "../../configs/apiClient";
 
 async function createQuestion(question, setConfirmation, setError) {
@@ -18,9 +24,11 @@ function CreateQuestion({
    answerArray,
    correctAnswer,
    question,
+   shuffle,
    setAnswerArray,
    setCorrectAnswer,
    setQuestion,
+   setShuffle,
 }) {
    const [confirmation, setConfirmation] = useState("");
    const [error, setError] = useState("");
@@ -95,6 +103,23 @@ function CreateQuestion({
             <span>Add an answer.</span>
          </button>
 
+         <div className="font-2xl my-2 flex items-center">
+            <label htmlFor="shuffle" className="flex items-center">
+               <span className="sr-only">Shuffle the answer choices.</span>
+               <span
+                  className={`${
+                     shuffle ? "text-primary" : "text-gray-400"
+                  } text-xl hover:text-primary transition duration-250 ease-in-out mr-2`}
+                  onClick={(e) => {
+                     e.preventDefault();
+                     setShuffle(!shuffle);
+                  }}
+               >
+                  {shuffle ? <FaCheckSquare /> : <FaRegSquare />}
+               </span>
+            </label>
+            <span>Shuffle the answer choices.</span>
+         </div>
          <p className="mt-2 mb-2 text-primary">{confirmation}</p>
          <p className="mt-2 mb-2 text-wrong">{error}</p>
 
@@ -126,6 +151,7 @@ function CreateQuestion({
                         .map((answer) => `'${answer}'`)
                         .join(","),
                      correct_answer: answerArray[correctAnswer],
+                     shuffle: shuffle ? 1 : 0,
                   },
                   setConfirmation,
                   setError

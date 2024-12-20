@@ -45,7 +45,7 @@ def add_question():
     except Exception as e:
         return make_response(jsonify({'error': 'Invalid JSON'}), 400)
     mycursor = mydb.cursor()
-    mycursor.execute(f"INSERT INTO Questions (question, question_type, correct_answer, choices) VALUES ('{question_data['question']}', '{question_data['question_type']}', '{question_data['correct_answer']}', JSON_ARRAY({question_data['choices']}))")
+    mycursor.execute(f"INSERT INTO Questions (question, question_type, correct_answer, choices, shuffle) VALUES ('{question_data['question']}', '{question_data['question_type']}', '{question_data['correct_answer']}', JSON_ARRAY({question_data['choices']}), '{question_data['shuffle']}')")
     mydb.commit()
     return make_response(jsonify({'message': 'Question added successfully', 'question_id': mycursor.lastrowid}), 201)
 

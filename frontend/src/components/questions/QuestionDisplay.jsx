@@ -27,7 +27,10 @@ function QuestionDisplay({ answerArray, correctAnswer, question }) {
                         fontSize:
                            answer.length === 0
                               ? "1.5rem"
-                              : Math.max(1.5, 3 - answer.length * 0.2) + "rem",
+                              : Math.max(
+                                   1.5,
+                                   3 - Math.floor(answer.length / 5) * 0.5
+                                ) + "rem",
                         opacity: answer.length === 0 ? 0.5 : 1,
                      }}
                   >{`${
