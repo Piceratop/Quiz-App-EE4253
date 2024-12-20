@@ -1,14 +1,15 @@
 from flask import Flask, request, jsonify, make_response
 from flask_cors import CORS
-import mysql.connector
-import json
+from mysql.connector.pooling import MySQLConnectionPool
 
 app = Flask(__name__)
 CORS(app)
 
 PORT = 8000
 
-mydb = mysql.connector.connect(
+pool = MySQLConnectionPool(
+    pool_name="quiz_app_connection_pool",
+    pool_size=10,
     host="localhost",
     user="root",
     passwd="Subsonic-Framing8-Monsieur-Lash",
@@ -18,9 +19,10 @@ mydb = mysql.connector.connect(
 
 @app.route("/api/questions", methods=["GET"])
 def get_questions():
-    mycursor = mydb.cursor()
+    connection = pool.get_connection()
+    mycursor = connection.cursor()
     try:
-        mydb.start_transaction()
+        connection.start_transaction()
         if request.args.get("page"):
             page = int(request.args.get("page"))
             mycursor.execute(f"SELECT * FROM Questions ORDER BY id DESC LIMIT {(page - 1) * 5}, 5")
@@ -38,24 +40,31 @@ def get_questions():
                 "correct_count": question[6],
                 "shuffle": question[7]
             }
+        connection.commit()
         return jsonify(questions_dict)
     except Exception as e:
-        mydb.rollback()
+        connection.rollback()
         return make_response(jsonify({'error': str(e)}), 500)
-
+    finally:
+        mycursor.close()
+        connection.close()
 
 @app.route("/api/questions/count", methods=["GET"])
 def get_questions_count():
-    mycursor = mydb.cursor()
+    connection = pool.get_connection()
+    mycursor = connection.cursor()
     try:
-        mydb.start_transaction()
+        connection.start_transaction()
         mycursor.execute("SELECT COUNT(*) FROM Questions")
         count = mycursor.fetchone()[0]
-        mydb.commit()
+        connection.commit()
         return jsonify({"count": count})
-    except:
-        mydb.rollback()
-        return make_response(jsonify({'error': 'Database error occurred'}), 500)
+    except Exception as e:
+        connection.rollback()
+        return make_response(jsonify({'error': str(e)}), 500)
+    finally:
+        mycursor.close()
+        connection.close()
 
 @app.route("/api/questions", methods=["POST"])
 def add_question():
@@ -63,17 +72,23 @@ def add_question():
         question_data = request.get_json()
     except Exception as e:
         return make_response(jsonify({'error': 'Invalid JSON'}), 400)
-    mycursor = mydb.cursor()
+    
+    connection = pool.get_connection()
+    mycursor = connection.cursor()
     try:
-        mydb.start_transaction()
-        mycursor.execute(f"INSERT INTO Questions (question, question_type, correct_answer, choices, shuffle) VALUES ('{question_data['question']}', '{question_data['question_type']}', '{question_data['correct_answer']}', JSON_ARRAY({question_data['choices']}), '{question_data['shuffle']}')")
-        mydb.commit()
+        connection.start_transaction()
+        mycursor.execute(
+            f"INSERT INTO Questions (question, question_type, correct_answer, choices, shuffle) VALUES ('{question_data['question']}', '{question_data['question_type']}', '{question_data['correct_answer']}', JSON_ARRAY({question_data['choices']}), '{question_data['shuffle']}')"
+        )
+        connection.commit()
         return make_response(jsonify({'message': 'Question added successfully', 'question_id': mycursor.lastrowid}), 201)
     except Exception as e:
-        mydb.rollback()
+        connection.rollback()
         return make_response(jsonify({'error': str(e)}), 500)
+    finally:
+        mycursor.close()
+        connection.close()
 
 if __name__ == "__main__":
     app.run(port=PORT)
-
 
