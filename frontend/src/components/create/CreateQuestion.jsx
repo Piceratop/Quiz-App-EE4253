@@ -106,8 +106,10 @@ function CreateQuestion() {
                   createQuestion({
                      question,
                      question_type: "MCQ",
-                     choices: JSON.stringify(answerArray),
-                     correct_answer: JSON.parse(correctAnswer),
+                     choices: answerArray
+                        .map((answer) => `'${answer}'`)
+                        .join(","),
+                     correct_answer: answerArray[correctAnswer],
                   });
                }}
             >

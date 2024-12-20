@@ -29,15 +29,19 @@ function Explore() {
    return (
       <div>
          <h2 className="page-title">Explore</h2>
-         {Object.entries(questions).map(([id, question]) => (
-            <QuestionBox
-               key={id}
-               choices={question.choices}
-               correctAnswer={question.correct_answer}
-               question={question.question}
-               type={question.question_type}
-            />
-         ))}
+         {Object.entries(questions)
+            .slice()
+            .reverse()
+            .map(([id, question]) => (
+               <QuestionBox
+                  key={id}
+                  question={question.question}
+                  choices={question.choices}
+                  correctAnswer={question.correct_answer}
+                  shuffle={question.shuffle}
+                  type={question.question_type}
+               />
+            ))}
       </div>
    );
 }

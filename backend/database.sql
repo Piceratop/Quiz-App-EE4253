@@ -11,7 +11,8 @@ CREATE TABLE IF NOT EXISTS Questions (
    correct_answer TEXT,
    choices JSON,
    attempt_count INTEGER DEFAULT 0,
-   correct_count INTEGER DEFAULT 0
+   correct_count INTEGER DEFAULT 0,
+   shuffle BOOLEAN DEFAULT 1
 );
 
 -- @block

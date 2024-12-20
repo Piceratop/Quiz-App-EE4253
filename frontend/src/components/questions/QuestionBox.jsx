@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 /**
  * QuestionBox is a component that renders a single question and its choices.
@@ -14,12 +14,17 @@ import { useState } from "react";
  * @returns {JSX.Element}
  */
 export default function QuestionBox({
+   question,
    correctAnswer,
    choices,
-   question,
+   shuffle,
    type,
 }) {
-   const choiceArray = JSON.parse(choices);
+   const [choiceArray, setChoiceArray] = useState([]);
+   useEffect(() => {
+      setChoiceArray(JSON.parse(choices).sort(() => Math.random() - 0.5));
+   }, []);
+
    const [isSubmitted, setIsSubmitted] = useState(false);
    const [userChoice, setUserChoice] = useState(null);
 
