@@ -82,7 +82,9 @@ function CreateQuestion() {
                </span>
                <span>Add an answer.</span>
             </button>
+
             <p className="mt-2 mb-2 text-wrong">{error}</p>
+
             <button
                className="w-full p-2 rounded-md border border-1 border-primary flex items-center justify-center bg-primary text-background"
                type="submit"
@@ -113,7 +115,7 @@ function CreateQuestion() {
                   });
                }}
             >
-               Submit
+               Create
             </button>
          </section>
          <section className="col-span-2 border-4 border-primary"></section>
