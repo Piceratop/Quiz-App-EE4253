@@ -22,7 +22,9 @@ export default function QuestionBox({
 }) {
    const [choiceArray, setChoiceArray] = useState([]);
    useEffect(() => {
-      setChoiceArray(JSON.parse(choices).sort(() => Math.random() - 0.5));
+      if (shuffle)
+         setChoiceArray(JSON.parse(choices).sort(() => Math.random() - 0.5));
+      else setChoiceArray(JSON.parse(choices));
    }, []);
 
    const [isSubmitted, setIsSubmitted] = useState(false);
