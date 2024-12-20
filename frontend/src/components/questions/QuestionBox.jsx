@@ -83,6 +83,7 @@ export default function QuestionBox({
                         name={`${question}`}
                         value={choice}
                         onChange={(e) => setUserChoice(e.target.value)}
+                        disabled={isSubmitted}
                      />
                      {choice}
                   </label>
