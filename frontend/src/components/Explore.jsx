@@ -11,6 +11,7 @@ import QuestionBox from "./questions/QuestionBox";
  */
 async function getQuestions(page) {
    const response = await apiClient.get("/questions?page=" + page);
+   console.log(response.data);
    return response.data;
 }
 
@@ -52,8 +53,8 @@ function Explore() {
                <QuestionBox
                   key={id}
                   question={question.question}
-                  choices={question.choices}
-                  correctAnswer={question.correct_answer}
+                  possibleAnswers={question.possible_answers}
+                  correctAnswers={question.correct_answers}
                   shuffle={question.shuffle}
                   type={question.question_type}
                />

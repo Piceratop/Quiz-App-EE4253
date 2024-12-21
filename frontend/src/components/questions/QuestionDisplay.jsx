@@ -26,10 +26,10 @@ function QuestionDisplay({ answerArray, correctAnswer, question }) {
                      style={{
                         fontSize:
                            answer.length === 0
-                              ? "1.5rem"
+                              ? "1.25rem"
                               : Math.max(
-                                   1.5,
-                                   3 - Math.floor(answer.length / 5) * 0.5
+                                   1.25,
+                                   3 - Math.floor(answer.length / 5) * 0.25
                                 ) + "rem",
                         opacity: answer.length === 0 ? 0.5 : 1,
                      }}

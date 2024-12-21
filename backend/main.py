@@ -9,7 +9,7 @@ PORT = 8000
 
 pool = MySQLConnectionPool(
     pool_name="quiz_app_connection_pool",
-    pool_size=10,
+    pool_size=5,
     host="localhost",
     user="root",
     passwd="Subsonic-Framing8-Monsieur-Lash",
@@ -34,8 +34,8 @@ def get_questions():
             questions_dict[question[0]] = {
                 "question": question[1],
                 "question_type": question[2],
-                "correct_answer": question[3],
-                "choices": question[4],
+                "correct_answers": question[3],
+                "possible_answers": question[4],
                 "attempt_count": question[5],
                 "correct_count": question[6],
                 "shuffle": question[7]
