@@ -1,21 +1,26 @@
+from dotenv import load_dotenv
 from flask import Flask, request, jsonify, make_response
 from flask_cors import CORS
 from mysql.connector.pooling import MySQLConnectionPool
 import json
+import os
 
 app = Flask(__name__)
 CORS(app)
 
 PORT = 8000
 
+
+load_dotenv()
+
 pool = MySQLConnectionPool(
     pool_name="quiz_app_connection_pool",
     pool_size=5,
-    host="localhost",
-    user="root",
-    passwd="Subsonic-Framing8-Monsieur-Lash",
-    database="quiz_app",
-    port=3306
+    host=os.getenv("DB_HOST"),
+    user=os.getenv("DB_USER"),
+    passwd=os.getenv("DB_PASSWORD"),
+    database=os.getenv("DB_NAME"),
+    port=int(os.getenv("DB_PORT"))
 )
 
 @app.route("/api/questions", methods=["GET"])

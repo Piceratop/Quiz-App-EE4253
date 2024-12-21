@@ -1,0 +1,41 @@
+# Environment files
+.env
+*.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Python-related files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+env/
+.venv/
+.env/
+
+# IDE-specific files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Logs
+*.log
+
+# Dependency directories
+node_modules/
+.pnp/
+.pnp.js
+
+# Build and distribution directories
+build/
+dist/
+*.egg-info/
+
+# Miscellaneous
+.DS_Store
+Thumbs.db
