@@ -29,7 +29,7 @@ function QuestionDisplay({ answerArray, correctAnswer, question }) {
                               ? "1.25rem"
                               : Math.max(
                                    1.25,
-                                   3 - Math.floor(answer.length / 5) * 0.25
+                                   3 - Math.ceil(answer.length / 4) * 0.25
                                 ) + "rem",
                         opacity: answer.length === 0 ? 0.5 : 1,
                      }}

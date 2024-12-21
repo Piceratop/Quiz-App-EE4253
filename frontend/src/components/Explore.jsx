@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import apiClient from "../configs/apiClient";
-import QuestionBox from "./questions/QuestionBox";
+import MultipleChoiceQuestion from "./questions/MultipleChoiceQuestion";
 
 /**
  * Fetches questions from the API and returns the response data.
@@ -11,11 +11,10 @@ import QuestionBox from "./questions/QuestionBox";
  */
 async function getQuestions(page) {
    const response = await apiClient.get("/questions?page=" + page);
-   console.log(response.data);
    return response.data;
 }
 
-async function getQuestionsCount(page) {
+async function getQuestionsCount() {
    const response = await apiClient.get("/questions/count");
    return response.data.count;
 }
@@ -27,7 +26,7 @@ function Explore() {
 
    useEffect(() => {
       const fetchQuestionsCount = async () => {
-         const data = await getQuestionsCount(page);
+         const data = await getQuestionsCount();
          setTotalPage(Math.ceil(data / 5));
       };
 
@@ -47,17 +46,17 @@ function Explore() {
       <div>
          <h2 className="page-title">Explore</h2>
          {Object.entries(questions)
-            .slice()
-            .reverse()
+            .sort(([idA], [idB]) => parseInt(idB, 10) - parseInt(idA, 10))
             .map(([id, question]) => (
-               <QuestionBox
-                  key={id}
-                  question={question.question}
-                  possibleAnswers={question.possible_answers}
-                  correctAnswers={question.correct_answers}
-                  shuffle={question.shuffle}
-                  type={question.question_type}
-               />
+               question.question_type === "MCQ" && (
+                  <MultipleChoiceQuestion
+                     key={id}
+                     question={question.question}
+                     possibleAnswers={question.possible_answers}
+                     correctAnswers={question.correct_answers}
+                     shuffle={question.shuffle}
+                  />
+               )
             ))}
          <div className="mt-4 flex justify-center items-center">
             <button

@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify, make_response
 from flask_cors import CORS
 from mysql.connector.pooling import MySQLConnectionPool
+import json
 
 app = Flask(__name__)
 CORS(app)
@@ -76,10 +77,20 @@ def add_question():
     connection = pool.get_connection()
     mycursor = connection.cursor()
     try:
+        # Use json.dumps to convert lists to JSON strings
+        correct_answers = json.dumps(question_data['correct_answers'])
+        possible_answers = json.dumps(question_data['possible_answers'])
+        
+        query = "INSERT INTO Questions(question, question_type, correct_answers, possible_answers, shuffle) VALUES (%s, %s, %s, %s, %s)"
+        print(query)  # For debugging
         connection.start_transaction()
-        mycursor.execute(
-            f"INSERT INTO Questions (question, question_type, correct_answer, choices, shuffle) VALUES ('{question_data['question']}', '{question_data['question_type']}', '{question_data['correct_answer']}', JSON_ARRAY({question_data['choices']}), '{question_data['shuffle']}')"
-        )
+        mycursor.execute(query, (
+            question_data['question'], 
+            question_data['question_type'], 
+            correct_answers, 
+            possible_answers,
+            question_data.get('shuffle', True)
+        ))
         connection.commit()
         return make_response(jsonify({'message': 'Question added successfully', 'question_id': mycursor.lastrowid}), 201)
     except Exception as e:
@@ -91,4 +102,3 @@ def add_question():
 
 if __name__ == "__main__":
     app.run(port=PORT)
-

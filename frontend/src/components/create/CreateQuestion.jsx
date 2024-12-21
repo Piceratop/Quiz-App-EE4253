@@ -15,7 +15,7 @@ async function createQuestion(question, setConfirmation, setError) {
       return response.data;
    } catch (error) {
       console.error(error);
-      setError("Failed to create question.");
+      setError("Failed to create the question due to server error.");
       return null;
    }
 }
@@ -32,7 +32,6 @@ function CreateQuestion({
 }) {
    const [confirmation, setConfirmation] = useState("");
    const [error, setError] = useState("");
-   console.log(correctAnswer);
    return (
       <section className="col-span-1 p-4 border-4 border-primary">
          <fieldset className="p-2 mb-4 rounded-md border border-1 border-primary">
@@ -147,10 +146,8 @@ function CreateQuestion({
                   {
                      question,
                      question_type: "MCQ",
-                     choices: answerArray
-                        .map((answer) => `'${answer}'`)
-                        .join(","),
-                     correct_answer: answerArray[correctAnswer],
+                     possible_answers: answerArray,
+                     correct_answers: [answerArray[correctAnswer]],
                      shuffle: shuffle ? 1 : 0,
                   },
                   setConfirmation,
