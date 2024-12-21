@@ -8,10 +8,14 @@ import {
 } from "react-icons/fa";
 import apiClient from "../../configs/apiClient";
 
-async function createQuestion(question, setConfirmation, setError) {
+async function createQuestion(question, setAnswerArray, setConfirmation, setCorrectAnswer, setError, setQuestion, setShuffle) {
    try {
       const response = await apiClient.post("/questions", question);
       setConfirmation("Question created successfully.");
+      setAnswerArray(["", "", "", ""]);
+      setCorrectAnswer(-1);
+      setQuestion("");
+      setShuffle(false);
       return response.data;
    } catch (error) {
       console.error(error);
@@ -127,6 +131,7 @@ function CreateQuestion({
             type="submit"
             onClick={(e) => {
                e.preventDefault();
+
                if (!question) {
                   setError("Question cannot be empty.");
                   return;
@@ -141,6 +146,7 @@ function CreateQuestion({
                   setError("Please select a correct answer.");
                   return;
                }
+               setConfirmation("");
                setError("");
                createQuestion(
                   {
@@ -150,8 +156,12 @@ function CreateQuestion({
                      correct_answers: [answerArray[correctAnswer]],
                      shuffle: shuffle ? 1 : 0,
                   },
+                  setAnswerArray,
                   setConfirmation,
-                  setError
+                  setCorrectAnswer,
+                  setError,
+                  setQuestion,
+                  setShuffle,
                );
             }}
          >
