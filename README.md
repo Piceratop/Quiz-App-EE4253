@@ -3,7 +3,7 @@
 ## How to run the application:
 
 ### 1. Clone the repository:
-Install git and clone the repository using the following command:
+Install git on [https://git-scm.com/downloads](https://git-scm.com/downloads) and clone the repository using the following command:
 ```
 git clone https://github.com/EE4253-quiz-app/quiz-app.git
 ```
