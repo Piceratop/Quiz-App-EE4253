@@ -38,7 +38,7 @@ DB_NAME=quiz_app
 
 Then run the following command to start the backend server:
 ```
-python3 backend/main.py
+python3 main.py
 ```
 
 ### 4. Run the application:
