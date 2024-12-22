@@ -9,12 +9,12 @@ git clone https://github.com/EE4253-quiz-app/quiz-app.git
 ```
 
 ### 2. Install dependencies:
-Install NodeJS. In the 'frontend' directory, run the following command to install the required dependencies:
+Install NodeJS on [https://nodejs.org/en/download/prebuilt-installer/current](https://nodejs.org/en/download/prebuilt-installer/current). In the 'frontend' directory, run the following command to install the required dependencies:
 ```
 npm install
 ```
 
-Install Python. In the 'backend' directory, run the following command to install the required dependencies:
+Install Python on [https://www.python.org/downloads/](https://www.python.org/downloads/). In the 'backend' directory, run the following command to install the required dependencies:
 ```
 pip install -r requirements.txt
 ```
