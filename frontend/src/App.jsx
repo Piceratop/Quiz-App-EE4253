@@ -4,7 +4,7 @@ import Quiz from "./components/Quiz";
 
 const App = () => {
    return (
-      <div className="bg-background text-primary">
+      <div className="bg-background text-primary min-h-screen">
          <BrowserRouter>
             <Header />
             <Quiz />
