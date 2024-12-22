@@ -4,6 +4,7 @@ from flask_cors import CORS
 from mysql.connector.pooling import MySQLConnectionPool
 import json
 import os
+from auth import register_user, login_user, validate_jwt_token
 
 app = Flask(__name__)
 CORS(app)
@@ -104,6 +105,56 @@ def add_question():
     finally:
         mycursor.close()
         connection.close()
+
+@app.route('/register', methods=['POST'])
+def register():
+    data = request.get_json()
+    username = data.get('username')
+    password = data.get('password')
+
+    if not username or not password:
+        return jsonify({"error": "Missing required fields"}), 400
+
+    success, message = register_user(username, password)
+    
+    if success:
+        return jsonify({"message": message}), 201
+    else:
+        return jsonify({"error": message}), 400
+
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    username = data.get('username')
+    password = data.get('password')
+
+    if not username or not password:
+        return jsonify({"error": "Missing username or password"}), 400
+
+    success, result = login_user(username, password)
+    
+    if success:
+        return jsonify({"token": result}), 200
+    else:
+        return jsonify({"error": result}), 401
+
+@app.route('/validate_token', methods=['POST'])
+def validate_token():
+    token = request.json.get('token')
+    
+    if not token:
+        return jsonify({"error": "No token provided"}), 400
+
+    decoded_token = validate_jwt_token(token)
+    
+    if decoded_token:
+        return jsonify({
+            "valid": True, 
+            "user_id": decoded_token.get('user_id'),
+            "username": decoded_token.get('username')
+        }), 200
+    else:
+        return jsonify({"valid": False, "error": "Invalid or expired token"}), 401
 
 if __name__ == "__main__":
     app.run(port=PORT)
