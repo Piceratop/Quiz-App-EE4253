@@ -2,7 +2,7 @@ import os
 import re
 import jwt
 import bcrypt
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import mysql.connector
 from dotenv import load_dotenv
 
@@ -60,7 +60,7 @@ def generate_jwt_token(user_id, username):
     payload = {
         'user_id': user_id,
         'username': username,
-        'exp': datetime.now(datetime.timezone.utc) + JWT_EXPIRATION_DELTA
+        'exp': datetime.now(timezone.utc) + JWT_EXPIRATION_DELTA
     }
     return jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
 
@@ -96,14 +96,14 @@ def register_user(username, password):
         cursor = conn.cursor()
         
         # Check if username already exists
-        cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
+        cursor.execute("SELECT * FROM Users WHERE username = %s", (username,))
         if cursor.fetchone():
             return False, "Username already exists"
 
         # Insert new user
         cursor.execute(
-            "INSERT INTO users (username, password_hash) VALUES (%s, %s)", 
-            (username, hashed_password)
+            "INSERT INTO Users (username, password_hash, role) VALUES (%s, %s, %s)", 
+            (username, hashed_password, 'user')
         )
         conn.commit()
         return True, "User registered successfully"
@@ -130,7 +130,7 @@ def login_user(username, password):
 
     try:
         cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
+        cursor.execute("SELECT * FROM Users WHERE username = %s", (username,))
         user = cursor.fetchone()
 
         if not user:
@@ -139,10 +139,6 @@ def login_user(username, password):
         # Verify password
         if not verify_password(password, user['password_hash']):
             return False, "Invalid credentials"
-
-        # Update last login
-        cursor.execute("UPDATE users SET last_login = NOW() WHERE id = %s", (user['id'],))
-        conn.commit()
 
         # Generate JWT token
         token = generate_jwt_token(user['id'], user['username'])

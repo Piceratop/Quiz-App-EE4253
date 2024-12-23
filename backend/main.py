@@ -106,7 +106,7 @@ def add_question():
         mycursor.close()
         connection.close()
 
-@app.route('/register', methods=['POST'])
+@app.route('/api/register', methods=['POST'])
 def register():
     data = request.get_json()
     username = data.get('username')
@@ -122,7 +122,7 @@ def register():
     else:
         return jsonify({"error": message}), 400
 
-@app.route('/login', methods=['POST'])
+@app.route('/api/login', methods=['POST'])
 def login():
     data = request.get_json()
     username = data.get('username')
