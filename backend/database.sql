@@ -13,7 +13,9 @@ CREATE TABLE IF NOT EXISTS Questions (
    possible_answers JSON,
    attempt_count INTEGER DEFAULT 0,
    correct_count INTEGER DEFAULT 0,
-   shuffle BOOLEAN DEFAULT 1
+   shuffle BOOLEAN DEFAULT 1,
+   created_by INT,
+   FOREIGN KEY (created_by) REFERENCES Users(id)
 );
 
 -- @block
@@ -41,3 +43,8 @@ INSERT INTO Questions(question, question_type, correct_answers, possible_answers
 ('True or False: The MySQL function used to return the current date and time is called CURRENT_TIME().', 'MCQ', JSON_ARRAY('False'), JSON_ARRAY('True', 'False'), 1),
 ('What is the purpose of the JOIN clause in SQL?', 'MCQ', JSON_ARRAY('To combine rows from two or more tables'), JSON_ARRAY('To delete records', 'To combine rows from two or more tables', 'To insert records into a table', 'To update existing records'), 1),
 ('Which command is used to remove a table from a database in MySQL?', 'MCQ', JSON_ARRAY('DROP TABLE'), JSON_ARRAY('DELETE TABLE', 'DROP TABLE', 'REMOVE TABLE', 'DESTROY TABLE'), 1);
+
+-- @block
+
+SELECT * FROM Questions;
+SELECT * FROM Users;

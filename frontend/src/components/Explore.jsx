@@ -10,12 +10,18 @@ import MultipleChoiceQuestion from "./questions/MultipleChoiceQuestion";
  * @returns {Promise<import("../types/api").Question[]>} The response data, an array of questions.
  */
 async function getQuestions(page) {
-   const response = await apiClient.get("/questions?page=" + page);
+   const token = localStorage.getItem("token");
+   const response = await apiClient.get("/questions?page=" + page, {
+      headers: { Authorization: `Bearer ${token}` },
+   });
    return response.data;
 }
 
 async function getQuestionsCount() {
-   const response = await apiClient.get("/questions/count");
+   const token = localStorage.getItem("token");
+   const response = await apiClient.get("/questions/count", {
+      headers: { Authorization: `Bearer ${token}` },
+   });
    return response.data.count;
 }
 
@@ -47,17 +53,18 @@ function Explore() {
          <h2 className="page-title">Explore</h2>
          {Object.entries(questions)
             .sort(([idA], [idB]) => parseInt(idB, 10) - parseInt(idA, 10))
-            .map(([id, question]) => (
-               question.question_type === "MCQ" && (
-                  <MultipleChoiceQuestion
-                     key={id}
-                     question={question.question}
-                     possibleAnswers={question.possible_answers}
-                     correctAnswers={question.correct_answers}
-                     shuffle={question.shuffle}
-                  />
-               )
-            ))}
+            .map(
+               ([id, question]) =>
+                  question.question_type === "MCQ" && (
+                     <MultipleChoiceQuestion
+                        key={id}
+                        question={question.question}
+                        possibleAnswers={question.possible_answers}
+                        correctAnswers={question.correct_answers}
+                        shuffle={question.shuffle}
+                     />
+                  )
+            )}
          <div className="mt-4 flex justify-center items-center">
             <button
                className={`mr-2 p-4 rounded-full border-2 border-primary text-xl transition duration-400 ${

@@ -5,6 +5,8 @@ import bcrypt
 from datetime import datetime, timedelta, timezone
 import mysql.connector
 from dotenv import load_dotenv
+from functools import wraps
+from flask import request, jsonify, make_response
 
 # Load environment variables
 load_dotenv()
@@ -65,20 +67,63 @@ def generate_jwt_token(user_id, username):
     return jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
 
 def validate_jwt_token(token):
-    """Validate and decode a JWT token."""
+    """
+    Validate and decode a JWT token.
+    
+    Args:
+        token (str): JWT token to validate
+    
+    Returns:
+        dict: Decoded token payload if valid, None otherwise
+    """
     try:
-        return jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+        decoded = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+        return decoded
     except jwt.ExpiredSignatureError:
+        print("Token has expired")
         return None
     except jwt.InvalidTokenError:
+        print("Invalid token")
         return None
+
+def require_token(func):
+    """
+    Decorator to require a valid JWT token for a route.
+    
+    Args:
+        func (callable): The route function to decorate
+    
+    Returns:
+        callable: Wrapped route function with token validation
+    """
+    @wraps(func)
+    def decorated_function(*args, **kwargs):
+        # Verify JWT token
+        auth_header = request.headers.get('Authorization')
+        if not auth_header:
+            return make_response(jsonify({'error': 'No authorization header'}), 401)
+        
+        try:
+            token = auth_header.split(' ')[1]  # Bearer <token>
+            decoded = validate_jwt_token(token)
+            if not decoded:
+                return make_response(jsonify({'error': 'Invalid token'}), 401)
+            
+            # Attach decoded token to the request for use in the route
+            request.token_payload = decoded
+        except Exception as e:
+            return make_response(jsonify({'error': 'Invalid token format'}), 401)
+        
+        return func(*args, **kwargs)
+    
+    return decorated_function
 
 def register_user(username, password):
     """
     Register a new user with validation and security checks.
     
     Returns:
-    - Tuple (success: bool, message: str)
+    - Tuple (success: bool, token/message: str)
     """
     # Validate password
     if not validate_password(password):
@@ -93,7 +138,7 @@ def register_user(username, password):
         return False, "Database connection error"
 
     try:
-        cursor = conn.cursor()
+        cursor = conn.cursor(dictionary=True)
         
         # Check if username already exists
         cursor.execute("SELECT * FROM Users WHERE username = %s", (username,))
@@ -106,7 +151,14 @@ def register_user(username, password):
             (username, hashed_password, 'user')
         )
         conn.commit()
-        return True, "User registered successfully"
+
+        # Fetch the newly created user to get their ID
+        cursor.execute("SELECT * FROM Users WHERE username = %s", (username,))
+        user = cursor.fetchone()
+
+        # Automatically generate login token
+        token = generate_jwt_token(user['id'], user['username'])
+        return True, token
 
     except mysql.connector.Error as err:
         print(f"Registration error: {err}")
