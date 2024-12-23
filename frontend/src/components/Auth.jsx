@@ -3,27 +3,22 @@ function handleAuth(type) {}
 function AuthPartition({ type }) {
    const fieldSetStyle =
       "pb-2 px-2 mb-4 rounded-md border border-1 border-primary";
+   const inputStyle = "w-full bg-transparent outline-none";
    return (
       <form className="col-span-1 p-4">
          <h1 className="text-2xl font-bold mb-4">{type}</h1>
          <fieldset className={fieldSetStyle}>
             <legend className="px-1">Username</legend>
-            <input type="text" className="w-full bg-transparent outline-none" />
+            <input type="text" className={inputStyle} />
          </fieldset>
          <fieldset className={fieldSetStyle}>
             <legend className="px-1">Password</legend>
-            <input
-               type="password"
-               className="w-full bg-transparent outline-none"
-            />
+            <input type="password" className={inputStyle} />
          </fieldset>
          {type === "Register" && (
             <fieldset className={fieldSetStyle}>
                <legend className="px-1">Repeat Password</legend>
-               <input
-                  type="password"
-                  className="w-full bg-transparent outline-none"
-               />
+               <input type="password" className={inputStyle} />
             </fieldset>
          )}
          <button
