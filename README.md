@@ -3,18 +3,18 @@
 ## How to run the application:
 
 ### 1. Clone the repository:
-Install git and clone the repository using the following command:
+Install git on [https://git-scm.com/downloads](https://git-scm.com/downloads) and clone the repository using the following command:
 ```
 git clone https://github.com/EE4253-quiz-app/quiz-app.git
 ```
 
 ### 2. Install dependencies:
-In the 'frontend' directory, run the following command to install the required dependencies:
+Install NodeJS on [https://nodejs.org/en/download/prebuilt-installer/current](https://nodejs.org/en/download/prebuilt-installer/current). In the 'frontend' directory, run the following command to install the required dependencies:
 ```
 npm install
 ```
 
-In the 'backend' directory, run the following command to install the required dependencies:
+Install Python on [https://www.python.org/downloads/](https://www.python.org/downloads/). In the 'backend' directory, run the following command to install the required dependencies:
 ```
 pip install -r requirements.txt
 ```
@@ -38,7 +38,7 @@ DB_NAME=quiz_app
 
 Then run the following command to start the backend server:
 ```
-python3 backend/main.py
+python3 main.py
 ```
 
 ### 4. Run the application:
