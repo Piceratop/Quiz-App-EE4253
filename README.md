@@ -7,7 +7,7 @@
 Install git on [https://git-scm.com/downloads](https://git-scm.com/downloads) and clone the repository using the following command:
 
 ```
-git clone https://github.com/EE4253-quiz-app/quiz-app.git
+git clone https://github.com/Piceratop/Quiz-App-EE4253.git
 ```
 
 ### 2. Install dependencies:
