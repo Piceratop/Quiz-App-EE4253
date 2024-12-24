@@ -3,54 +3,89 @@ import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import apiClient from "../configs/apiClient";
 import MultipleChoiceQuestion from "./questions/MultipleChoiceQuestion";
 
-/**
- * Fetches questions from the API and returns the response data.
- *
- * @param {number} page The page number to fetch. Defaults to 1.
- * @returns {Promise<import("../types/api").Question[]>} The response data, an array of questions.
- */
-async function getQuestions(page) {
+async function getQuestions(page = 1, search = "") {
    const token = localStorage.getItem("token");
-   const response = await apiClient.get("/questions?page=" + page, {
+   let apiDirectory = `/questions?page=${page}`;
+   if (search) {
+      apiDirectory += `&search=${search}`;
+   }
+   const response = await apiClient.get(apiDirectory, {
       headers: { Authorization: `Bearer ${token}` },
    });
    return response.data;
 }
 
-async function getQuestionsCount() {
+async function getQuestionsCount(search) {
    const token = localStorage.getItem("token");
-   const response = await apiClient.get("/questions/count", {
+   let apiDirectory = "/questions/count";
+   if (search) {
+      apiDirectory += `?search=${search}`;
+   }
+   const response = await apiClient.get(apiDirectory, {
       headers: { Authorization: `Bearer ${token}` },
    });
    return response.data.count;
+}
+
+async function fetchQuestions(page, search, setQuestions) {
+   const data = await getQuestions(page, search);
+   setQuestions(data);
+}
+
+async function fetchQuestionsCount(search, setTotalPage) {
+   const data = await getQuestionsCount(search);
+   setTotalPage(Math.ceil(data / 5));
+}
+
+function SearchBar({ search, setPage, setQuestions, setSearch, setTotalPage }) {
+   return (
+      <form className="mt-2 flex items-center border border-primary rounded-md">
+         <input
+            type="text"
+            placeholder="Search for questions..."
+            className="w-full p-2 bg-transparent outline-none"
+            onChange={(e) => setSearch(e.target.value)}
+         />
+         <button
+            type="submit"
+            className="p-2 bg-primary text-background border-l border-primary"
+            onClick={(e) => {
+               e.preventDefault();
+               fetchQuestionsCount(search, setTotalPage);
+               setPage(1);
+               fetchQuestions(1, search, setQuestions);
+            }}
+         >
+            Search
+         </button>
+      </form>
+   );
 }
 
 function Explore() {
    const [page, setPage] = useState(1);
    const [totalPage, setTotalPage] = useState(1);
    const [questions, setQuestions] = useState({});
+   const [search, setSearch] = useState("");
 
    useEffect(() => {
-      const fetchQuestionsCount = async () => {
-         const data = await getQuestionsCount();
-         setTotalPage(Math.ceil(data / 5));
-      };
-
-      fetchQuestionsCount();
-   });
+      fetchQuestionsCount(search, setTotalPage);
+   }, []);
 
    useEffect(() => {
-      const fetchQuestions = async (page) => {
-         const data = await getQuestions(page);
-         setQuestions(data);
-      };
-
-      fetchQuestions(page);
+      fetchQuestions(page, search, setQuestions);
    }, [page]);
 
    return (
       <div>
          <h2 className="page-title">Explore</h2>
+         <SearchBar
+            search={search}
+            setPage={setPage}
+            setQuestions={setQuestions}
+            setSearch={setSearch}
+            setTotalPage={setTotalPage}
+         />
          {Object.entries(questions)
             .sort(([idA], [idB]) => parseInt(idB, 10) - parseInt(idA, 10))
             .map(
@@ -63,7 +98,7 @@ function Explore() {
                         correctAnswers={question.correct_answers}
                         shuffle={question.shuffle}
                      />
-                  )
+                  ),
             )}
          <div className="mt-4 flex justify-center items-center">
             <button
@@ -85,7 +120,7 @@ function Explore() {
                }`}
                onClick={() =>
                   setPage((prevPage) =>
-                     prevPage < totalPage ? prevPage + 1 : prevPage
+                     prevPage < totalPage ? prevPage + 1 : prevPage,
                   )
                }
             >

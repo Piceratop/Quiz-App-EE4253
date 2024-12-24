@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 
-
 /**
  * QuestionBox is a component that renders a single question and its choices.
  *
@@ -13,7 +12,7 @@ import { useEffect, useState } from "react";
  *
  * For MCQ (Multiple Choice Question) type:
  * - Renders the question in a large, centered box with a border
- * - Displays choices in a grid 
+ * - Displays choices in a grid
  * - Allows selecting and submitting an answer
  * - Provides visual feedback on correct/incorrect answers
  *
@@ -30,7 +29,7 @@ export default function QuestionBox({
    useEffect(() => {
       if (shuffle)
          setChoiceArray(
-            JSON.parse(possibleAnswers).sort(() => Math.random() - 0.5)
+            JSON.parse(possibleAnswers).sort(() => Math.random() - 0.5),
          );
       else setChoiceArray(JSON.parse(possibleAnswers));
    }, []);
@@ -54,8 +53,8 @@ export default function QuestionBox({
                   isSubmitted
                      ? "bg-background text-primary "
                      : userChoice
-                     ? "bg-primary text-background"
-                     : "bg-gray-400 text-background disabled"
+                       ? "bg-primary text-background"
+                       : "bg-gray-400 text-background disabled"
                }`}
                type="submit"
                onClick={(e) => {
@@ -82,11 +81,11 @@ export default function QuestionBox({
                         ? correctAnswers.includes(choice)
                            ? "bg-primary text-background"
                            : userChoice === choice
-                           ? "bg-wrong text-background border-wrong"
-                           : ""
+                             ? "bg-wrong text-background border-wrong"
+                             : ""
                         : userChoice === choice
-                        ? "bg-secondary"
-                        : ""
+                          ? "bg-secondary"
+                          : ""
                   } ${userChoice === choice ? "font-bold" : ""}`}
                   key={choice}
                >

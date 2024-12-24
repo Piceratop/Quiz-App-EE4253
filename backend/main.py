@@ -4,19 +4,18 @@ from flask_cors import CORS
 from mysql.connector.pooling import MySQLConnectionPool
 import json
 import os
-from auth import register_user, login_user, validate_jwt_token, require_token
+from auth import register_user, login_user, validate_jwt_token, require_token, update_username
 
 app = Flask(__name__)
 CORS(app)
 
 PORT = 8000
 
-
 load_dotenv()
 
 pool = MySQLConnectionPool(
     pool_name="quiz_app_connection_pool",
-    pool_size=5,
+    pool_size=8,
     host=os.getenv("DB_HOST"),
     user=os.getenv("DB_USER"),
     passwd=os.getenv("DB_PASSWORD"),
@@ -31,11 +30,14 @@ def get_questions():
     mycursor = connection.cursor()
     try:
         connection.start_transaction()
+        query = "SELECT * FROM Questions"
+        if request.args.get("search"):
+            search_term = request.args.get("search")
+            query += f" WHERE LOWER(question) LIKE LOWER('%{search_term}%')"
         if request.args.get("page"):
             page = int(request.args.get("page"))
-            mycursor.execute(f"SELECT * FROM Questions ORDER BY id DESC LIMIT {(page - 1) * 5}, 5")
-        else:
-            mycursor.execute("SELECT * FROM Questions ORDER BY id DESC")
+            query += f" ORDER BY id DESC LIMIT {(page - 1) * 5}, 5"
+        mycursor.execute(query)
         questions = mycursor.fetchall()
         questions_dict = {}
         for question in questions:
@@ -64,7 +66,11 @@ def get_questions_count():
     mycursor = connection.cursor()
     try:
         connection.start_transaction()
-        mycursor.execute("SELECT COUNT(*) FROM Questions")
+        query = "SELECT COUNT(*) FROM Questions"
+        if request.args.get("search"):
+            search_term = request.args.get("search")
+            query += f" WHERE LOWER(question) LIKE LOWER('%{search_term}%')"
+        mycursor.execute(query)
         count = mycursor.fetchone()[0]
         connection.commit()
         return jsonify({"count": count})
@@ -86,7 +92,6 @@ def add_question():
     connection = pool.get_connection()
     mycursor = connection.cursor()
     try:
-        # Use json.dumps to convert lists to JSON strings
         correct_answers = json.dumps(question_data['correct_answers'])
         possible_answers = json.dumps(question_data['possible_answers'])
         
@@ -118,10 +123,10 @@ def register():
     if not username or not password:
         return jsonify({"error": "Missing required fields"}), 400
 
-    success, message = register_user(username, password)
+    success, message, user_id, username = register_user(username, password)
     
     if success:
-        return jsonify({"token": message}), 201
+        return jsonify({"token": message, "id": user_id, "user": username}), 201
     else:
         return jsonify({"error": message}), 400
 
@@ -134,12 +139,30 @@ def login():
     if not username or not password:
         return jsonify({"error": "Missing username or password"}), 400
 
-    success, result = login_user(username, password)
+    success, result, user_id, username = login_user(username, password)
     
     if success:
-        return jsonify({"token": result}), 200
+        return jsonify({"token": result, "id": user_id, "user": username}), 200
     else:
         return jsonify({"error": result}), 401
+
+@app.route('/api/update-username', methods=['PUT'])
+@require_token
+def update_username_route():
+    data = request.get_json()
+    new_username = data.get('username')
+
+    if not new_username:
+        return jsonify({"error": "New username is required"}), 400
+
+    user_id = request.token_payload['user_id']
+
+    success, message = update_username(user_id, new_username)
+    
+    if success:
+        return jsonify({"message": message, "new_username": new_username}), 200
+    else:
+        return jsonify({"error": message}), 400
 
 if __name__ == "__main__":
     app.run(port=PORT)

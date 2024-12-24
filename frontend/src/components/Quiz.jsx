@@ -1,9 +1,9 @@
-import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-import Explore from "./Explore";
-import Create from "./Create";
-import Landing from "./Landing";
 import Auth from "./Auth";
+import Create from "./Create";
+import Explore from "./Explore";
+import Landing from "./Landing";
+import Profile from "./Profile";
 import { useAuth } from "../context/AuthContext";
 
 const PrivateRoute = ({ children }) => {
@@ -30,6 +30,14 @@ function Quiz() {
                element={
                   <PrivateRoute>
                      <Create />
+                  </PrivateRoute>
+               }
+            />
+            <Route
+               path="/profile"
+               element={
+                  <PrivateRoute>
+                     <Profile />
                   </PrivateRoute>
                }
             />

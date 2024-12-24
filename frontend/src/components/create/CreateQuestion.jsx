@@ -8,7 +8,15 @@ import {
 } from "react-icons/fa";
 import apiClient from "../../configs/apiClient";
 
-async function createQuestion(question, setAnswerArray, setConfirmation, setCorrectAnswer, setError, setQuestion, setShuffle) {
+async function createQuestion(
+   question,
+   setAnswerArray,
+   setConfirmation,
+   setCorrectAnswer,
+   setError,
+   setQuestion,
+   setShuffle,
+) {
    try {
       const token = localStorage.getItem("token");
       const response = await apiClient.post("/questions", question, {
@@ -69,8 +77,8 @@ function CreateQuestion({
                   onChange={(e) =>
                      setAnswerArray(
                         answerArray.map((a, j) =>
-                           j === i ? e.target.value : a
-                        )
+                           j === i ? e.target.value : a,
+                        ),
                      )
                   }
                />

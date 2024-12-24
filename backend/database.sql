@@ -48,4 +48,4 @@ INSERT INTO Questions(question, question_type, correct_answers, possible_answers
 -- @block
 
 SELECT * FROM Questions;
-SELECT * FROM Users;
+-- SELECT * FROM Users;

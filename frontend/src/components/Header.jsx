@@ -7,7 +7,7 @@ function Header() {
 
    const linkStyle =
       "px-1 py-1 transition duration-500 ease-in-out border-b-2 border-transparent hover:border-b-2 hover:border-primary";
-   
+
    const handleLogout = () => {
       logout();
       localStorage.removeItem("token");
@@ -28,8 +28,11 @@ function Header() {
                   <Link className={linkStyle} to="/create">
                      Create
                   </Link>
-                  <button 
-                     className={`${linkStyle} text-wrong hover:border-wrong`} 
+                  <Link className={linkStyle} to="/profile">
+                     Profile
+                  </Link>
+                  <button
+                     className={`${linkStyle} text-wrong hover:border-wrong`}
                      onClick={handleLogout}
                   >
                      Logout

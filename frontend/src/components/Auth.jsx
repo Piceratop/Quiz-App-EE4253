@@ -9,8 +9,8 @@ function handleAuth(username, password, type, setError, login, navigate) {
          .post("/login", { username, password })
          .then((response) => {
             localStorage.setItem("token", response.data.token);
-            login();
-            navigate('/explore');
+            login(response.data.id, response.data.user);
+            navigate("/explore");
          })
          .catch((error) => setError(error.response.data.error));
    } else if (type === "Register") {
@@ -18,8 +18,8 @@ function handleAuth(username, password, type, setError, login, navigate) {
          .post("/register", { username, password })
          .then((response) => {
             localStorage.setItem("token", response.data.token);
-            login();
-            navigate('/explore');
+            login(response.data.id, response.data.user);
+            navigate("/explore");
          })
          .catch((error) => setError(error.response.data.error));
    }
