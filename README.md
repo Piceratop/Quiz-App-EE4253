@@ -33,7 +33,7 @@ mysql -u root -p
 CREATE DATABASE quiz_app;
 ```
 
-Then run the command in 'database.sql' to create tables in the database. Read the 'database.sql' file for more details.
+Then run the command in 'database.sql' in the 'backend' directory to create tables in the database. Read the 'database.sql' file for more details.
 
 In the 'backend' directory, create a .env file and add the following lines:
 
