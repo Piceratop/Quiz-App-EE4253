@@ -1,10 +1,12 @@
 -- @block
 
+-- Run this block to reset the database
 DROP TABLE IF EXISTS Questions;
 DROP TABLE IF EXISTS Users;
 
 -- @block
 
+-- Run this block to create users table
 CREATE TABLE IF NOT EXISTS Users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) UNIQUE NOT NULL,
@@ -15,6 +17,7 @@ CREATE TABLE IF NOT EXISTS Users (
 
 -- @block
 
+-- Run this block to create questions table
 CREATE TABLE IF NOT EXISTS Questions (
    id INTEGER PRIMARY KEY AUTO_INCREMENT,
    question TEXT NOT NULL,
@@ -30,11 +33,19 @@ CREATE TABLE IF NOT EXISTS Questions (
 
 -- @block
 
--- DELETE FROM Users WHERE username = 'user2';
+-- Ignore this block
+DELETE FROM Users WHERE username = 'user2';
 TRUNCATE Questions;
 
 -- @block
 
+-- Run this block to insert data into users table
+INSERT INTO Users (username, password_hash, role) VALUES
+('user1', '$2b$12$yqF8G6bqXxX9TfMg0a6H8Owq5j2Kt2aXk0aXk0aXk0aXk', 'user'),
+
+-- @block
+
+-- Run this block to insert data into questions table
 INSERT INTO Questions(question, question_type, correct_answers, possible_answers, shuffle, created_by) VALUES
 ('What is the default port number for MySQL?', 'MCQ', JSON_ARRAY('3306'), JSON_ARRAY('1433', '1521', '3306', '5432'), 1, 3),
 ('Which SQL command is used to create a new table in a MySQL database?', 'MCQ', JSON_ARRAY('CREATE TABLE'), JSON_ARRAY('CREATE DATABASE', 'CREATE TABLE', 'INSERT INTO', 'ALTER TABLE'), 1, 3),
@@ -47,5 +58,6 @@ INSERT INTO Questions(question, question_type, correct_answers, possible_answers
 
 -- @block
 
--- SELECT * FROM Questions;
+-- Ignore this block
+SELECT * FROM Questions;
 SELECT * FROM Users;
