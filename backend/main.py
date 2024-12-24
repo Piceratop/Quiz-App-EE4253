@@ -47,7 +47,7 @@ def get_questions():
                 "attempt_count": question[5],
                 "correct_count": question[6],
                 "shuffle": question[7],
-                "created_by": question[8]  # Add the created_by field
+                "created_by": question[8]
             }
         connection.commit()
         return jsonify(questions_dict)
@@ -98,7 +98,7 @@ def add_question():
             correct_answers, 
             possible_answers,
             question_data.get('shuffle', True),
-            request.token_payload['user_id']  # Use the token payload from the decorator
+            request.token_payload['user_id']
         ))
         connection.commit()
         return make_response(jsonify({'message': 'Question added successfully', 'question_id': mycursor.lastrowid}), 201)
@@ -121,7 +121,7 @@ def register():
     success, message = register_user(username, password)
     
     if success:
-        return jsonify({"message": message}), 201
+        return jsonify({"token": message}), 201
     else:
         return jsonify({"error": message}), 400
 

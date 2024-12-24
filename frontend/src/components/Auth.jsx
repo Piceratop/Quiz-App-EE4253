@@ -1,14 +1,16 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import apiClient from "../configs/apiClient";
+import { useAuth } from "../context/AuthContext";
 
-function handleAuth(username, password, type, setError) {
+function handleAuth(username, password, type, setError, login, navigate) {
    if (type === "Login") {
       apiClient
          .post("/login", { username, password })
          .then((response) => {
             localStorage.setItem("token", response.data.token);
-            console.log("token", response.data);
-            // window.location.href = "/explore";
+            login();
+            navigate('/explore');
          })
          .catch((error) => setError(error.response.data.error));
    } else if (type === "Register") {
@@ -16,9 +18,10 @@ function handleAuth(username, password, type, setError) {
          .post("/register", { username, password })
          .then((response) => {
             localStorage.setItem("token", response.data.token);
-            window.location.href = "/explore";
+            login();
+            navigate('/explore');
          })
-         .catch((error) => setError(error.response.data.message));
+         .catch((error) => setError(error.response.data.error));
    }
 }
 
@@ -27,9 +30,13 @@ function AuthPartition({ type }) {
    const [password, setPassword] = useState("");
    const [repeatPassword, setRepeatPassword] = useState("");
    const [error, setError] = useState("");
+   const { login } = useAuth();
+   const navigate = useNavigate();
+
    const fieldSetStyle =
       "pb-2 px-2 mb-2 rounded-md border border-1 border-primary";
    const inputStyle = "w-full bg-transparent outline-none";
+
    return (
       <form className="col-span-1 p-4">
          <h1 className="text-2xl font-bold mb-4">{type}</h1>
@@ -70,7 +77,7 @@ function AuthPartition({ type }) {
                   return;
                }
                setError("");
-               handleAuth(username, password, type, setError);
+               handleAuth(username, password, type, setError, login, navigate);
             }}
          >
             {type}

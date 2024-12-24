@@ -10,7 +10,12 @@ import apiClient from "../../configs/apiClient";
 
 async function createQuestion(question, setAnswerArray, setConfirmation, setCorrectAnswer, setError, setQuestion, setShuffle) {
    try {
-      const response = await apiClient.post("/questions", question);
+      const token = localStorage.getItem("token");
+      const response = await apiClient.post("/questions", question, {
+         headers: {
+            "Authentication": `Bearer ${token}`,
+         },
+      });
       setConfirmation("Question created successfully.");
       setAnswerArray(["", "", "", ""]);
       setCorrectAnswer(-1);
@@ -19,7 +24,7 @@ async function createQuestion(question, setAnswerArray, setConfirmation, setCorr
       return response.data;
    } catch (error) {
       console.error(error);
-      setError("Failed to create the question due to server error.");
+      setError(error.response?.data?.error || "Failed to create question");
       return null;
    }
 }

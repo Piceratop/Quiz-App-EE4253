@@ -5,6 +5,16 @@ DROP TABLE IF EXISTS Users;
 
 -- @block
 
+CREATE TABLE IF NOT EXISTS Users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    role ENUM('user', 'admin') DEFAULT 'user'
+);
+
+-- @block
+
 CREATE TABLE IF NOT EXISTS Questions (
    id INTEGER PRIMARY KEY AUTO_INCREMENT,
    question TEXT NOT NULL,
@@ -20,17 +30,8 @@ CREATE TABLE IF NOT EXISTS Questions (
 
 -- @block
 
-CREATE TABLE IF NOT EXISTS Users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(50) UNIQUE NOT NULL,
-    password_hash VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    role ENUM('user', 'admin') DEFAULT 'user'
-);
-
--- @block
-
-TRUNCATE Questions;
+DELETE FROM Users WHERE username = 'user2';
+-- TRUNCATE Questions;
 
 -- @block
 
