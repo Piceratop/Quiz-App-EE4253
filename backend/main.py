@@ -4,7 +4,7 @@ from flask_cors import CORS
 from mysql.connector.pooling import MySQLConnectionPool
 import json
 import os
-from auth import register_user, login_user, validate_jwt_token, require_token, update_username
+from auth import register_user, login_user, validate_jwt_token, require_token, update_username, update_password
 
 app = Flask(__name__)
 CORS(app)
@@ -146,7 +146,7 @@ def login():
     else:
         return jsonify({"error": result}), 401
 
-@app.route('/api/update-username', methods=['PUT'])
+@app.route('/api/update-username', methods=['PATCH'])
 @require_token
 def update_username_route():
     data = request.get_json()
@@ -161,6 +161,25 @@ def update_username_route():
     
     if success:
         return jsonify({"message": message, "new_username": new_username}), 200
+    else:
+        return jsonify({"error": message}), 400
+
+@app.route('/api/update-password', methods=['PATCH'])
+@require_token
+def update_password_route():
+    data = request.get_json()
+    old_password = data.get('oldPassword')
+    new_password = data.get('newPassword')
+
+    if not new_password:
+        return jsonify({"error": "New password is required"}), 400
+
+    user_id = request.token_payload['user_id']
+
+    success, message = update_password(user_id, old_password, new_password)
+    
+    if success:
+        return jsonify({"message": message}), 200
     else:
         return jsonify({"error": message}), 400
 

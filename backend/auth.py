@@ -196,3 +196,52 @@ def update_username(user_id, new_username):
         if conn.is_connected():
             cursor.close()
             conn.close()
+
+def update_password(user_id, old_password, new_password):
+    if not validate_password(new_password):
+        return False, "New password does not meet complexity requirements"
+
+    conn = get_db_connection()
+    if not conn:
+        return False, "Database connection error"
+
+    try:
+        conn.start_transaction()
+        
+        cursor = conn.cursor(dictionary=True)
+        
+        cursor.execute("SELECT * FROM Users WHERE id = %s", (user_id,))
+        user = cursor.fetchone()
+
+        if not user:
+            conn.rollback()
+            return False, "User not found"
+
+        if not verify_password(old_password, user['password_hash']):
+            conn.rollback()
+            return False, "Current password is incorrect"
+
+        new_hashed_password = hash_password(new_password)
+
+        cursor.execute(
+            "UPDATE Users SET password_hash = %s WHERE id = %s", 
+            (new_hashed_password, user_id)
+        )
+
+        if cursor.rowcount == 0:
+            conn.rollback()
+            return False, "Password update failed"
+
+        conn.commit()
+
+        return True, "Password updated successfully"
+
+    except mysql.connector.Error as err:
+        conn.rollback()
+        print(f"Password update error: {err}")
+        return False, "Password update failed"
+    
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()

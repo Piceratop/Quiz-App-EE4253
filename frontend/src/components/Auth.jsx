@@ -1,41 +1,40 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import apiClient from "../configs/apiClient";
-import { useAuth } from "../context/AuthContext";
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import apiClient from '../configs/apiClient';
+import { useAuth } from '../context/AuthContext';
 
 function handleAuth(username, password, type, setError, login, navigate) {
-   if (type === "Login") {
+   if (type === 'Login') {
       apiClient
-         .post("/login", { username, password })
+         .post('/login', { username, password })
          .then((response) => {
-            localStorage.setItem("token", response.data.token);
+            localStorage.setItem('token', response.data.token);
             login(response.data.id, response.data.user);
-            navigate("/explore");
+            navigate('/explore');
          })
-         .catch((error) => setError(error.response.data.error));
-   } else if (type === "Register") {
+         .catch((error) => setError(error.response.data.error || 'Invalid login'));
+   } else if (type === 'Register') {
       apiClient
-         .post("/register", { username, password })
+         .post('/register', { username, password })
          .then((response) => {
-            localStorage.setItem("token", response.data.token);
+            localStorage.setItem('token', response.data.token);
             login(response.data.id, response.data.user);
-            navigate("/explore");
+            navigate('/explore');
          })
-         .catch((error) => setError(error.response.data.error));
+         .catch((error) => setError(error.response.data.error || 'Invalid register'));
    }
 }
 
 function AuthPartition({ type }) {
-   const [username, setUsername] = useState("");
-   const [password, setPassword] = useState("");
-   const [repeatPassword, setRepeatPassword] = useState("");
-   const [error, setError] = useState("");
+   const [username, setUsername] = useState('');
+   const [password, setPassword] = useState('');
+   const [repeatPassword, setRepeatPassword] = useState('');
+   const [error, setError] = useState('');
    const { login } = useAuth();
    const navigate = useNavigate();
 
-   const fieldSetStyle =
-      "pb-2 px-2 mb-2 rounded-md border border-1 border-primary";
-   const inputStyle = "w-full bg-transparent outline-none";
+   const fieldSetStyle = 'pb-2 px-2 mb-2 rounded-md border border-1 border-primary';
+   const inputStyle = 'w-full bg-transparent outline-none';
 
    return (
       <form className="col-span-1 p-4">
@@ -56,7 +55,7 @@ function AuthPartition({ type }) {
                onChange={(e) => setPassword(e.target.value)}
             />
          </fieldset>
-         {type === "Register" && (
+         {type === 'Register' && (
             <fieldset className={fieldSetStyle}>
                <legend className="px-1">Repeat Password</legend>
                <input
@@ -72,11 +71,11 @@ function AuthPartition({ type }) {
             className=" bg-primary text-background p-2 rounded-md"
             onClick={(e) => {
                e.preventDefault();
-               if (type === "Register" && password !== repeatPassword) {
-                  setError("Passwords do not match.");
+               if (type === 'Register' && password !== repeatPassword) {
+                  setError('Passwords do not match.');
                   return;
                }
-               setError("");
+               setError('');
                handleAuth(username, password, type, setError, login, navigate);
             }}
          >

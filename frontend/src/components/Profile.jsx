@@ -1,22 +1,58 @@
-import { useEffect, useState } from "react";
-import { useAuth } from "../context/AuthContext";
+import { useEffect, useState } from 'react';
+import { useAuth } from '../context/AuthContext';
+import apiClient from '../configs/apiClient';
+
+async function handleUpdateUsername(id, username, setConfirmation, setError, updateUser) {
+   const token = localStorage.getItem('token');
+   const response = await apiClient.patch(
+      '/update-username',
+      { username },
+      {
+         headers: { Authorization: `Bearer ${token}` },
+      }
+   );
+   if (response.status === 200) {
+      updateUser(id, username);
+      setConfirmation('Username updated successfully.');
+   } else {
+      setError(response.data.error || 'Failed to update username');
+      console.log(response.data);
+   }
+}
+
+async function handleUpdatePassword(oldPassword, newPassword, setError) {
+   const token = localStorage.getItem('token');
+   const response = await apiClient.patch(
+      '/update-password',
+      { oldPassword, newPassword },
+      {
+         headers: { Authorization: `Bearer ${token}` },
+      }
+   );
+   if (response.status === 200) {
+      localStorage.removeItem('token');
+      localStorage.setItem('token', response.data.token);
+   } else {
+      setError(response.data.error || 'Failed to update password');
+   }
+}
 
 function Profile() {
-   const { user } = useAuth();
-   const [username, setUsername] = useState("");
-   const [oldPassword, setOldPassword] = useState("");
-   const [newPassword, setNewPassword] = useState("");
-   const [repeatPassword, setRepeatPassword] = useState("");
+   const { id, user, updateUser } = useAuth();
+   const [username, setUsername] = useState('');
+   const [oldPassword, setOldPassword] = useState('');
+   const [newPassword, setNewPassword] = useState('');
+   const [repeatPassword, setRepeatPassword] = useState('');
+   const [confirmation, setConfirmation] = useState('');
+   const [error, setError] = useState('');
 
    useEffect(() => {
       setUsername(user);
-      console.log(username === user);
    }, [user]);
 
-   const fieldsetStyle =
-      "pb-2 px-2 mb-2 rounded-md border border-1 border-primary";
+   const fieldsetStyle = 'pb-2 px-2 mb-2 rounded-md border border-1 border-primary';
    const updateButtonStyle =
-      "p-2 mb-4 rounded-md bg-primary text-background border-l border-primary";
+      'p-2 mb-4 rounded-md bg-primary text-background border-l border-primary';
 
    return (
       <div>
@@ -34,17 +70,19 @@ function Profile() {
             </fieldset>
             <button
                type="submit"
-               className={`${updateButtonStyle} ${username === user ? "opacity-50" : ""}`}
+               className={`${updateButtonStyle} ${username === user ? 'opacity-50' : ''}`}
                disabled={username === user}
                onClick={(e) => {
                   e.preventDefault();
-                  console.log(username);
+                  setConfirmation('');
+                  setError('');
+                  handleUpdateUsername(id, username, setConfirmation, setError, updateUser);
                }}
             >
                Update username
             </button>
             <div className="grid grid-cols-3 gap-4">
-               <fieldset className={`${fieldsetStyle} col-span-1`}>
+               <fieldset className={`${fieldsetStyle} col-span-1}`}>
                   <legend className="px-1">Old Password</legend>
                   <input
                      type="password"
@@ -69,6 +107,21 @@ function Profile() {
                   />
                </fieldset>
             </div>
+            <button
+               type="submit"
+               className={`${updateButtonStyle} ${newPassword !== repeatPassword ? 'opacity-50' : ''}`}
+               disabled={newPassword !== repeatPassword}
+               onClick={(e) => {
+                  e.preventDefault();
+                  setConfirmation('');
+                  setError('');
+                  handleUpdatePassword(oldPassword, newPassword, setError);
+               }}
+            >
+               Update password
+            </button>
+            <p>{confirmation}</p>
+            <p className="text-wrong">{error}</p>
          </form>
       </div>
    );

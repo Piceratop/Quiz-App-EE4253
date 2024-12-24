@@ -1,4 +1,4 @@
-import { createContext, useState, useContext } from "react";
+import { createContext, useState, useContext } from 'react';
 
 export const AuthContext = createContext({
    isAuthenticated: false,
@@ -6,6 +6,7 @@ export const AuthContext = createContext({
    user: null,
    login: (id, user) => {},
    logout: () => {},
+   updateUser: (id, user) => {},
 });
 
 export const AuthProvider = ({ children }) => {
@@ -16,11 +17,11 @@ export const AuthProvider = ({ children }) => {
    });
 
    const login = (id, user) => setState({ isAuthenticated: true, id, user });
-   const logout = () =>
-      setState({ isAuthenticated: false, id: null, user: null });
+   const logout = () => setState({ isAuthenticated: false, id: null, user: null });
+   const updateUser = (id, user) => setState({ ...state, id, user });
 
    return (
-      <AuthContext.Provider value={{ ...state, login, logout }}>
+      <AuthContext.Provider value={{ ...state, login, logout, updateUser }}>
          {children}
       </AuthContext.Provider>
    );
