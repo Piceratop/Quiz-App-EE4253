@@ -48,7 +48,7 @@ DB_PORT=<your database port, default is 3306>
 Then run the following command to start the backend server:
 
 ```
-python3 main.py
+python main.py
 ```
 
 ### 4. Run the application:
