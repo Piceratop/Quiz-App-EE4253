@@ -13,7 +13,7 @@ async function createQuestion(question, setAnswerArray, setConfirmation, setCorr
       const token = localStorage.getItem("token");
       const response = await apiClient.post("/questions", question, {
          headers: {
-            "Authentication": `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
          },
       });
       setConfirmation("Question created successfully.");
