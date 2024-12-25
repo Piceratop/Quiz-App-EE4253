@@ -5,3 +5,7 @@
 .page-title {
    @apply text-2xl font-bold;
 }
+
+.choice {
+   @apply col-span-1 border border-primary rounded-md overflow-hidden;
+}

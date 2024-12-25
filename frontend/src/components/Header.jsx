@@ -28,6 +28,9 @@ function Header() {
                   <Link className={linkStyle} to="/create">
                      Create
                   </Link>
+                  <Link className={linkStyle} to="/practice">
+                     Practice
+                  </Link>
                   <Link className={linkStyle} to="/profile">
                      Profile
                   </Link>

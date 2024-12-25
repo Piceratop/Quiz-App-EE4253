@@ -3,6 +3,7 @@ import Auth from './Auth';
 import Create from './Create';
 import Explore from './Explore';
 import Landing from './Landing';
+import Practice from './Practice';
 import Profile from './Profile';
 import { useAuth } from '../context/AuthContext';
 
@@ -30,6 +31,14 @@ function Quiz() {
                element={
                   <PrivateRoute>
                      <Create />
+                  </PrivateRoute>
+               }
+            />
+            <Route
+               path="/practice"
+               element={
+                  <PrivateRoute>
+                     <Practice />
                   </PrivateRoute>
                }
             />
