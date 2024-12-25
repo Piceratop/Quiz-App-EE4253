@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
 /**
  * QuestionBox is a component that renders a single question and its choices.
@@ -19,18 +19,10 @@ import { useEffect, useState } from "react";
  * @param {{ question: string, correctAnswers: string[], possibleAnswers: string[], shuffle: boolean }} props
  * @returns {JSX.Element}
  */
-export default function QuestionBox({
-   question,
-   correctAnswers,
-   possibleAnswers,
-   shuffle,
-}) {
+export default function QuestionBox({ question, correctAnswers, possibleAnswers, shuffle }) {
    const [choiceArray, setChoiceArray] = useState([]);
    useEffect(() => {
-      if (shuffle)
-         setChoiceArray(
-            JSON.parse(possibleAnswers).sort(() => Math.random() - 0.5),
-         );
+      if (shuffle) setChoiceArray(JSON.parse(possibleAnswers).sort(() => Math.random() - 0.5));
       else setChoiceArray(JSON.parse(possibleAnswers));
    }, []);
 
@@ -41,9 +33,7 @@ export default function QuestionBox({
       <form className="my-6">
          <div className="my-2 border-primary border-2 transition duration-400 ease-in-out">
             <div className="border-b border-primary">
-               <div className="text-sm px-1">
-                  Question Type: Multiple Choice
-               </div>
+               <div className="text-sm px-1">Question Type: Multiple Choice</div>
             </div>
             <div className="text-2xl flex items-center justify-center py-12 px-4">
                <p className="text-center">{question}</p>
@@ -51,10 +41,10 @@ export default function QuestionBox({
             <button
                className={`w-full py-2 transition duration-400 ease-in-out ${
                   isSubmitted
-                     ? "bg-background text-primary "
+                     ? 'bg-background text-primary '
                      : userChoice
-                       ? "bg-primary text-background"
-                       : "bg-gray-400 text-background disabled"
+                       ? 'bg-primary text-background'
+                       : 'bg-gray-400 text-background disabled'
                }`}
                type="submit"
                onClick={(e) => {
@@ -65,7 +55,7 @@ export default function QuestionBox({
                }}
                disabled={isSubmitted || !userChoice}
             >
-               {isSubmitted ? "Submitted" : "Submit"}
+               {isSubmitted ? 'Submitted' : 'Submit'}
             </button>
          </div>
          <div
@@ -79,14 +69,14 @@ export default function QuestionBox({
                   className={`flex items-center justify-center py-8 px-4 border border-primary text-center text-lg transition duration-400 ease-in-out ${
                      isSubmitted
                         ? correctAnswers.includes(choice)
-                           ? "bg-primary text-background"
+                           ? 'bg-primary text-background'
                            : userChoice === choice
-                             ? "bg-wrong text-background border-wrong"
-                             : ""
+                             ? 'bg-wrong text-background border-wrong'
+                             : ''
                         : userChoice === choice
-                          ? "bg-secondary"
-                          : ""
-                  } ${userChoice === choice ? "font-bold" : ""}`}
+                          ? 'bg-secondary'
+                          : ''
+                  } ${userChoice === choice ? 'font-bold' : ''}`}
                   key={choice}
                >
                   <input

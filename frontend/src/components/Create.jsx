@@ -1,12 +1,12 @@
-import { useState } from "react";
+import { useState } from 'react';
 
-import CreateQuestion from "./create/CreateQuestion";
-import QuestionDisplay from "./questions/QuestionDisplay";
+import CreateQuestion from './create/CreateQuestion';
+import QuestionDisplay from './questions/QuestionDisplay';
 
 function Create() {
-   const [answerArray, setAnswerArray] = useState(["", "", "", ""]);
+   const [answerArray, setAnswerArray] = useState(['', '', '', '']);
    const [correctAnswer, setCorrectAnswer] = useState(-1);
-   const [question, setQuestion] = useState("");
+   const [question, setQuestion] = useState('');
    const [shuffle, setShuffle] = useState(false);
    return (
       <div>

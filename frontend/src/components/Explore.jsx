@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
-import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
-import apiClient from "../configs/apiClient";
-import MultipleChoiceQuestion from "./questions/MultipleChoiceQuestion";
+import { useEffect, useState } from 'react';
+import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
+import apiClient from '../configs/apiClient';
+import MultipleChoiceQuestion from './questions/MultipleChoiceQuestion';
 
-async function getQuestions(page = 1, search = "") {
-   const token = localStorage.getItem("token");
+async function getQuestions(page = 1, search = '') {
+   const token = localStorage.getItem('token');
    let apiDirectory = `/questions?page=${page}`;
    if (search) {
       apiDirectory += `&search=${search}`;
@@ -16,8 +16,8 @@ async function getQuestions(page = 1, search = "") {
 }
 
 async function getQuestionsCount(search) {
-   const token = localStorage.getItem("token");
-   let apiDirectory = "/questions/count";
+   const token = localStorage.getItem('token');
+   let apiDirectory = '/questions/count';
    if (search) {
       apiDirectory += `?search=${search}`;
    }
@@ -66,7 +66,7 @@ function Explore() {
    const [page, setPage] = useState(1);
    const [totalPage, setTotalPage] = useState(1);
    const [questions, setQuestions] = useState({});
-   const [search, setSearch] = useState("");
+   const [search, setSearch] = useState('');
 
    useEffect(() => {
       fetchQuestionsCount(search, setTotalPage);
@@ -90,7 +90,7 @@ function Explore() {
             .sort(([idA], [idB]) => parseInt(idB, 10) - parseInt(idA, 10))
             .map(
                ([id, question]) =>
-                  question.question_type === "MCQ" && (
+                  question.question_type === 'MCQ' && (
                      <MultipleChoiceQuestion
                         key={id}
                         question={question.question}
@@ -98,16 +98,14 @@ function Explore() {
                         correctAnswers={question.correct_answers}
                         shuffle={question.shuffle}
                      />
-                  ),
+                  )
             )}
          <div className="mt-4 flex justify-center items-center">
             <button
                className={`mr-2 p-4 rounded-full border-2 border-primary text-xl transition duration-400 ${
-                  page === 1 ? "opacity-50" : ""
+                  page === 1 ? 'opacity-50' : ''
                }`}
-               onClick={() =>
-                  setPage((prevPage) => (prevPage > 1 ? prevPage - 1 : 1))
-               }
+               onClick={() => setPage((prevPage) => (prevPage > 1 ? prevPage - 1 : 1))}
             >
                <FaArrowLeft />
             </button>
@@ -116,12 +114,10 @@ function Explore() {
             </p>
             <button
                className={`ml-2 p-4 text-xl rounded-full border-2 border-primary transition duration-400 ${
-                  page === totalPage ? "opacity-50" : ""
+                  page === totalPage ? 'opacity-50' : ''
                }`}
                onClick={() =>
-                  setPage((prevPage) =>
-                     prevPage < totalPage ? prevPage + 1 : prevPage,
-                  )
+                  setPage((prevPage) => (prevPage < totalPage ? prevPage + 1 : prevPage))
                }
             >
                <FaArrowRight />

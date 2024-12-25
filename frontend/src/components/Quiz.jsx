@@ -1,10 +1,10 @@
-import { Routes, Route, Navigate } from "react-router-dom";
-import Auth from "./Auth";
-import Create from "./Create";
-import Explore from "./Explore";
-import Landing from "./Landing";
-import Profile from "./Profile";
-import { useAuth } from "../context/AuthContext";
+import { Routes, Route, Navigate } from 'react-router-dom';
+import Auth from './Auth';
+import Create from './Create';
+import Explore from './Explore';
+import Landing from './Landing';
+import Profile from './Profile';
+import { useAuth } from '../context/AuthContext';
 
 const PrivateRoute = ({ children }) => {
    const { isAuthenticated } = useAuth();

@@ -1,5 +1,5 @@
-import Header from "./components/Header";
-import Quiz from "./components/Quiz";
+import Header from './components/Header';
+import Quiz from './components/Quiz';
 
 const App = () => {
    return (

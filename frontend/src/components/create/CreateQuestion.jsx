@@ -1,12 +1,6 @@
-import { useState } from "react";
-import {
-   FaCheckCircle,
-   FaPlus,
-   FaRegSquare,
-   FaTrash,
-   FaCheckSquare,
-} from "react-icons/fa";
-import apiClient from "../../configs/apiClient";
+import { useState } from 'react';
+import { FaCheckCircle, FaPlus, FaRegSquare, FaTrash, FaCheckSquare } from 'react-icons/fa';
+import apiClient from '../../configs/apiClient';
 
 async function createQuestion(
    question,
@@ -15,24 +9,24 @@ async function createQuestion(
    setCorrectAnswer,
    setError,
    setQuestion,
-   setShuffle,
+   setShuffle
 ) {
    try {
-      const token = localStorage.getItem("token");
-      const response = await apiClient.post("/questions", question, {
+      const token = localStorage.getItem('token');
+      const response = await apiClient.post('/questions', question, {
          headers: {
             Authorization: `Bearer ${token}`,
          },
       });
-      setConfirmation("Question created successfully.");
-      setAnswerArray(["", "", "", ""]);
+      setConfirmation('Question created successfully.');
+      setAnswerArray(['', '', '', '']);
       setCorrectAnswer(-1);
-      setQuestion("");
+      setQuestion('');
       setShuffle(false);
       return response.data;
    } catch (error) {
       console.error(error);
-      setError(error.response?.data?.error || "Failed to create question");
+      setError(error.response?.data?.error || 'Failed to create question');
       return null;
    }
 }
@@ -47,8 +41,8 @@ function CreateQuestion({
    setQuestion,
    setShuffle,
 }) {
-   const [confirmation, setConfirmation] = useState("");
-   const [error, setError] = useState("");
+   const [confirmation, setConfirmation] = useState('');
+   const [error, setError] = useState('');
    return (
       <section className="col-span-1 p-4 border-4 border-primary">
          <fieldset className="p-2 mb-4 rounded-md border border-1 border-primary">
@@ -75,16 +69,12 @@ function CreateQuestion({
                   className="w-full bg-transparent outline-none"
                   value={answer}
                   onChange={(e) =>
-                     setAnswerArray(
-                        answerArray.map((a, j) =>
-                           j === i ? e.target.value : a,
-                        ),
-                     )
+                     setAnswerArray(answerArray.map((a, j) => (j === i ? e.target.value : a)))
                   }
                />
                <span
                   className={`${
-                     correctAnswer === i ? "text-primary" : "text-gray-400"
+                     correctAnswer === i ? 'text-primary' : 'text-gray-400'
                   } pr-1 hover:text-primary transition duration-250  ease-in-out`}
                   onClick={(e) => {
                      e.preventDefault();
@@ -95,7 +85,7 @@ function CreateQuestion({
                </span>
                <span
                   className={`text-gray-400 hover:text-primary transition duration-250 ease-in-out ${
-                     answerArray.length <= 2 ? "hidden" : ""
+                     answerArray.length <= 2 ? 'hidden' : ''
                   }`}
                   onClick={(e) => {
                      e.preventDefault();
@@ -110,7 +100,7 @@ function CreateQuestion({
             className="w-full mt-2 p-2 rounded-md border border-1 border-primary flex items-center justify-center hover:bg-secondary transition duration-250 ease-in-out cursor-pointer"
             onClick={(e) => {
                e.preventDefault();
-               setAnswerArray([...answerArray, ""]);
+               setAnswerArray([...answerArray, '']);
             }}
          >
             <span className="mr-2">
@@ -124,7 +114,7 @@ function CreateQuestion({
                <span className="sr-only">Shuffle the answer choices.</span>
                <span
                   className={`${
-                     shuffle ? "text-primary" : "text-gray-400"
+                     shuffle ? 'text-primary' : 'text-gray-400'
                   } text-xl hover:text-primary transition duration-250 ease-in-out mr-2`}
                   onClick={(e) => {
                      e.preventDefault();
@@ -146,25 +136,25 @@ function CreateQuestion({
                e.preventDefault();
 
                if (!question) {
-                  setError("Question cannot be empty.");
+                  setError('Question cannot be empty.');
                   return;
                }
                for (const answer of answerArray) {
                   if (!answer) {
-                     setError("Answer choices cannot be empty.");
+                     setError('Answer choices cannot be empty.');
                      return;
                   }
                }
                if (correctAnswer === -1) {
-                  setError("Please select a correct answer.");
+                  setError('Please select a correct answer.');
                   return;
                }
-               setConfirmation("");
-               setError("");
+               setConfirmation('');
+               setError('');
                createQuestion(
                   {
                      question,
-                     question_type: "MCQ",
+                     question_type: 'MCQ',
                      possible_answers: answerArray,
                      correct_answers: [answerArray[correctAnswer]],
                      shuffle: shuffle ? 1 : 0,
@@ -174,7 +164,7 @@ function CreateQuestion({
                   setCorrectAnswer,
                   setError,
                   setQuestion,
-                  setShuffle,
+                  setShuffle
                );
             }}
          >

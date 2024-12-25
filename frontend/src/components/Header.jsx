@@ -1,17 +1,17 @@
-import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 function Header() {
    const { isAuthenticated, logout } = useAuth();
    const navigate = useNavigate();
 
    const linkStyle =
-      "px-1 py-1 transition duration-500 ease-in-out border-b-2 border-transparent hover:border-b-2 hover:border-primary";
+      'px-1 py-1 transition duration-500 ease-in-out border-b-2 border-transparent hover:border-b-2 hover:border-primary';
 
    const handleLogout = () => {
       logout();
-      localStorage.removeItem("token");
-      navigate("/auth");
+      localStorage.removeItem('token');
+      navigate('/auth');
    };
 
    return (

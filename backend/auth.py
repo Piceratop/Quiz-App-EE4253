@@ -219,7 +219,7 @@ def update_password(user_id, old_password, new_password):
 
         if not verify_password(old_password, user['password_hash']):
             conn.rollback()
-            return False, "Current password is incorrect"
+            return False, "The old password is incorrect"
 
         new_hashed_password = hash_password(new_password)
 
