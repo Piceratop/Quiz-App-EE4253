@@ -6,7 +6,7 @@ function Header() {
    const navigate = useNavigate();
 
    const linkStyle =
-      'px-1 py-1 transition duration-500 ease-in-out border-b-2 border-transparent hover:border-b-2 hover:border-primary';
+      'px-1 py-1 transition duration-400 ease-in-out border-b-2 border-transparent hover:border-b-2 hover:border-primary';
 
    const handleLogout = () => {
       logout();

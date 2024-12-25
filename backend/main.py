@@ -29,7 +29,6 @@ pool = MySQLConnectionPool(
 # Get Questions
 
 @app.route("/api/questions", methods=["GET"])
-@require_token
 def get_questions():
     connection = pool.get_connection()
     mycursor = connection.cursor()
@@ -85,6 +84,40 @@ def get_questions_count():
     finally:
         mycursor.close()
         connection.close()
+
+@app.route("/api/questions-set", methods=["GET"])
+@require_token
+def get_questions_set():
+    count = int(request.args.get("count"))
+
+    connection = pool.get_connection()
+    mycursor = connection.cursor()
+    try:
+        connection.start_transaction()
+        query = "SELECT * FROM Questions ORDER BY RAND() LIMIT %s"
+        mycursor.execute(query, (count,))
+        questions = mycursor.fetchall()
+        questions_dict = {}
+        for question in questions:
+            questions_dict[question[0]] = {
+                "question": question[1],
+                "question_type": question[2],
+                "correct_answers": question[3],
+                "possible_answers": question[4],
+                "attempt_count": question[5],
+                "correct_count": question[6],
+                "shuffle": question[7],
+                "created_by": question[8]
+            }
+        connection.commit()
+        return jsonify(questions_dict)
+    except Exception as e:
+        connection.rollback()
+        return make_response(jsonify({'error': str(e)}), 500)
+    finally:
+        mycursor.close()
+        connection.close()
+    
 
 # Add Question
 
@@ -197,4 +230,4 @@ def update_password_route():
         return jsonify({"error": message}), 400
 
 if __name__ == "__main__":
-    app.run(port=PORT)
+    app.run(port=PORT, debug=True)
