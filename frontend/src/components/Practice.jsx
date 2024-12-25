@@ -19,7 +19,10 @@ function handleGetQuestion(count, navigate, updateQuestions) {
       .get(`/questions-set?count=${count}`, {
          headers: { Authorization: `Bearer ${token}` },
       })
-      .then((response) => console.log(response.data));
+      .then((response) => {
+         updateQuestions(response.data);
+         navigate('/practice/play');
+      });
 }
 
 function Choice({ icon, onSubmit, paragraph, title }) {
