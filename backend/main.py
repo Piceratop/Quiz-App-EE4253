@@ -1,3 +1,4 @@
+from mailbox import Message
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify, make_response
 from flask_cors import CORS
@@ -22,6 +23,10 @@ pool = MySQLConnectionPool(
     database=os.getenv("DB_NAME"),
     port=int(os.getenv("DB_PORT"))
 )
+
+### Question Management
+
+# Get Questions
 
 @app.route("/api/questions", methods=["GET"])
 @require_token
@@ -81,6 +86,8 @@ def get_questions_count():
         mycursor.close()
         connection.close()
 
+# Add Question
+
 @app.route("/api/questions", methods=["POST"])
 @require_token
 def add_question():
@@ -114,6 +121,10 @@ def add_question():
         mycursor.close()
         connection.close()
 
+### User Management
+
+# Login and Register
+
 @app.route('/api/register', methods=['POST'])
 def register():
     data = request.get_json()
@@ -123,12 +134,12 @@ def register():
     if not username or not password:
         return jsonify({"error": "Missing required fields"}), 400
 
-    success, message, user_id, username = register_user(username, password)
+    success, result = register_user(username, password)
     
     if success:
-        return jsonify({"token": message, "id": user_id, "user": username}), 201
+        return jsonify({"token": result[0], "id": result[1], "user": username}), 201
     else:
-        return jsonify({"error": message}), 400
+        return jsonify({"error": result}), 400
 
 @app.route('/api/login', methods=['POST'])
 def login():
@@ -145,6 +156,8 @@ def login():
         return jsonify({"token": result[0], "id": result[1], "user": username}), 200
     else:
         return jsonify({"error": result}), 401
+
+# Update Username and Password
 
 @app.route('/api/update-username', methods=['PATCH'])
 @require_token
