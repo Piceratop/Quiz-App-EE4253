@@ -33,7 +33,7 @@ mysql -u root -p
 CREATE DATABASE quiz_app;
 ```
 
-Then run the command in 'database.sql' to create tables in the database. Read the 'database.sql' file for more details.
+Then run the command in 'database.sql' in the 'backend' directory to create tables in the database. Read the 'database.sql' file for more details.
 
 In the 'backend' directory, create a .env file and add the following lines:
 
@@ -48,7 +48,7 @@ DB_PORT=<your database port, default is 3306>
 Then run the following command to start the backend server:
 
 ```
-python3 main.py
+python main.py
 ```
 
 ### 4. Run the application:
