@@ -20,7 +20,15 @@ async function handleUpdateUsername(id, username, setConfirmation, setError, upd
    }
 }
 
-async function handleUpdatePassword(oldPassword, newPassword, setConfirmation, setError) {
+async function handleUpdatePassword(
+   oldPassword,
+   newPassword,
+   setConfirmation,
+   setError,
+   setOldPassword,
+   setNewPassword,
+   setRepeatPassword
+) {
    const token = localStorage.getItem('token');
    const response = await apiClient.patch(
       '/update-password',
@@ -31,6 +39,9 @@ async function handleUpdatePassword(oldPassword, newPassword, setConfirmation, s
    );
    if (response.status === 200) {
       setConfirmation('Password updated successfully.');
+      setOldPassword('');
+      setNewPassword('');
+      setRepeatPassword('');
    } else {
       setError(response.data.error || 'Failed to update password');
    }
@@ -116,7 +127,15 @@ function Profile() {
                   setError('');
                   if (newPassword !== repeatPassword) setError('Passwords do not match.');
                   if (newPassword.length < 8) setError('Password must be at least 8 characters.');
-                  handleUpdatePassword(oldPassword, newPassword, setConfirmation, setError);
+                  handleUpdatePassword(
+                     oldPassword,
+                     newPassword,
+                     setConfirmation,
+                     setError,
+                     setOldPassword,
+                     setNewPassword,
+                     setRepeatPassword
+                  );
                }}
             >
                Update password

@@ -139,10 +139,10 @@ def login():
     if not username or not password:
         return jsonify({"error": "Missing username or password"}), 400
 
-    success, result, user_id, username = login_user(username, password)
+    success, result= login_user(username, password)
     
     if success:
-        return jsonify({"token": result, "id": user_id, "user": username}), 200
+        return jsonify({"token": result[0], "id": result[1], "user": username}), 200
     else:
         return jsonify({"error": result}), 401
 
