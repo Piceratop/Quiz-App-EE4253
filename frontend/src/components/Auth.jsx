@@ -12,7 +12,9 @@ function handleAuth(username, password, type, setError, login, navigate) {
             login(response.data.id, response.data.user);
             navigate('/explore');
          })
-         .catch((error) => setError(error.response.data.error || 'Invalid login'));
+         .catch((error) =>
+            setError(error.response.data.error || 'Invalid login')
+         );
    } else if (type === 'Register') {
       apiClient
          .post('/register', { username, password })
@@ -21,7 +23,9 @@ function handleAuth(username, password, type, setError, login, navigate) {
             login(response.data.id, response.data.user);
             navigate('/explore');
          })
-         .catch((error) => setError(error.response.data.error || 'Invalid register'));
+         .catch((error) =>
+            setError(error.response.data.error || 'Invalid register')
+         );
    }
 }
 
@@ -33,7 +37,8 @@ function AuthPartition({ type }) {
    const { login } = useAuth();
    const navigate = useNavigate();
 
-   const fieldSetStyle = 'pb-2 px-2 mb-2 rounded-md border border-1 border-primary';
+   const fieldSetStyle =
+      'pb-2 px-2 mb-2 rounded-md border border-1 border-primary';
    const inputStyle = 'w-full bg-transparent outline-none';
 
    return (

@@ -1,5 +1,11 @@
 import { useState } from 'react';
-import { FaCheckCircle, FaPlus, FaRegSquare, FaTrash, FaCheckSquare } from 'react-icons/fa';
+import {
+   FaCheckCircle,
+   FaPlus,
+   FaRegSquare,
+   FaTrash,
+   FaCheckSquare,
+} from 'react-icons/fa';
 import apiClient from '../../configs/apiClient';
 
 async function createQuestion(
@@ -69,7 +75,11 @@ function CreateQuestion({
                   className="w-full bg-transparent outline-none"
                   value={answer}
                   onChange={(e) =>
-                     setAnswerArray(answerArray.map((a, j) => (j === i ? e.target.value : a)))
+                     setAnswerArray(
+                        answerArray.map((a, j) =>
+                           j === i ? e.target.value : a
+                        )
+                     )
                   }
                />
                <span

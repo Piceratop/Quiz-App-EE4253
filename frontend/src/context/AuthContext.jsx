@@ -17,7 +17,8 @@ export const AuthProvider = ({ children }) => {
    });
 
    const login = (id, user) => setState({ isAuthenticated: true, id, user });
-   const logout = () => setState({ isAuthenticated: false, id: null, user: null });
+   const logout = () =>
+      setState({ isAuthenticated: false, id: null, user: null });
    const updateUser = (id, user) => setState({ ...state, id, user });
 
    return (

@@ -654,6 +654,18 @@ video {
   min-height: 100vh;
 }
 
+.min-h-\[8rem\] {
+  min-height: 8rem;
+}
+
+.min-h-\[12rem\] {
+  min-height: 12rem;
+}
+
+.min-h-\[20rem\] {
+  min-height: 20rem;
+}
+
 .w-full {
   width: 100%;
 }
@@ -848,6 +860,11 @@ video {
 .py-8 {
   padding-top: 2rem;
   padding-bottom: 2rem;
+}
+
+.px-8 {
+  padding-left: 2rem;
+  padding-right: 2rem;
 }
 
 .pb-16 {

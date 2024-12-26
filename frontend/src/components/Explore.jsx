@@ -105,7 +105,9 @@ function Explore() {
                className={`mr-2 p-4 rounded-full border-2 border-primary text-xl transition duration-400 ${
                   page === 1 ? 'opacity-50' : ''
                }`}
-               onClick={() => setPage((prevPage) => (prevPage > 1 ? prevPage - 1 : 1))}
+               onClick={() =>
+                  setPage((prevPage) => (prevPage > 1 ? prevPage - 1 : 1))
+               }
             >
                <FaArrowLeft />
             </button>
@@ -117,7 +119,9 @@ function Explore() {
                   page === totalPage ? 'opacity-50' : ''
                }`}
                onClick={() =>
-                  setPage((prevPage) => (prevPage < totalPage ? prevPage + 1 : prevPage))
+                  setPage((prevPage) =>
+                     prevPage < totalPage ? prevPage + 1 : prevPage
+                  )
                }
             >
                <FaArrowRight />

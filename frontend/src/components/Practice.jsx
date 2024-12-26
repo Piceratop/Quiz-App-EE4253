@@ -64,15 +64,21 @@ export default function Practice() {
                icon={<RiShuffleFill size={48} />}
                onSubmit={(e) => {
                   e.preventDefault();
-                  handleGetQuestion(questionSetCount, navigate, updateQuestions);
+                  handleGetQuestion(
+                     questionSetCount,
+                     navigate,
+                     updateQuestions
+                  );
                }}
                paragraph={
                   <>
                      <p className={pStyle}>
-                        Test your knowledge by answering these randomly-picked questions.
+                        Test your knowledge by answering these randomly-picked
+                        questions.
                      </p>
                      <p className={pStyle}>
-                        You can have at most {totalQuestionCount} questions to practice.
+                        You can have at most {totalQuestionCount} questions to
+                        practice.
                      </p>
                      <p className={pStyle}>
                         Number of questions in this set:

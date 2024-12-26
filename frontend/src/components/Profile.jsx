@@ -2,7 +2,13 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import apiClient from '../configs/apiClient';
 
-async function handleUpdateUsername(id, username, setConfirmation, setError, updateUser) {
+async function handleUpdateUsername(
+   id,
+   username,
+   setConfirmation,
+   setError,
+   updateUser
+) {
    const token = localStorage.getItem('token');
    const response = await apiClient.patch(
       '/update-username',
@@ -60,7 +66,8 @@ function Profile() {
       setUsername(user);
    }, [user]);
 
-   const fieldsetStyle = 'pb-2 px-2 mb-2 rounded-md border border-1 border-primary';
+   const fieldsetStyle =
+      'pb-2 px-2 mb-2 rounded-md border border-1 border-primary';
    const updateButtonStyle =
       'p-2 mb-4 rounded-md bg-primary text-background border-l border-primary';
 
@@ -86,7 +93,13 @@ function Profile() {
                   e.preventDefault();
                   setConfirmation('');
                   setError('');
-                  handleUpdateUsername(id, username, setConfirmation, setError, updateUser);
+                  handleUpdateUsername(
+                     id,
+                     username,
+                     setConfirmation,
+                     setError,
+                     updateUser
+                  );
                }}
             >
                Update username
@@ -120,13 +133,17 @@ function Profile() {
             <button
                type="submit"
                className={`${updateButtonStyle} ${newPassword !== repeatPassword || newPassword.length < 8 ? 'opacity-50' : ''}`}
-               disabled={newPassword !== repeatPassword || newPassword.length < 8}
+               disabled={
+                  newPassword !== repeatPassword || newPassword.length < 8
+               }
                onClick={(e) => {
                   e.preventDefault();
                   setConfirmation('');
                   setError('');
-                  if (newPassword !== repeatPassword) setError('Passwords do not match.');
-                  if (newPassword.length < 8) setError('Password must be at least 8 characters.');
+                  if (newPassword !== repeatPassword)
+                     setError('Passwords do not match.');
+                  if (newPassword.length < 8)
+                     setError('Password must be at least 8 characters.');
                   handleUpdatePassword(
                      oldPassword,
                      newPassword,

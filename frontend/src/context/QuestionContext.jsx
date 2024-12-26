@@ -16,7 +16,11 @@ export const QuestionProvider = ({ children }) => {
    });
 
    const updateQuestions = (quiz_data) => {
-      setState({ ...state, questions: quiz_data, totalCount: quiz_data.length });
+      setState({
+         ...state,
+         questions: quiz_data,
+         totalCount: quiz_data.length,
+      });
    };
 
    return (
