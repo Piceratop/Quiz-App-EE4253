@@ -650,14 +650,6 @@ video {
   height: 100%;
 }
 
-.min-h-screen {
-  min-height: 100vh;
-}
-
-.min-h-\[8rem\] {
-  min-height: 8rem;
-}
-
 .min-h-\[12rem\] {
   min-height: 12rem;
 }
@@ -666,8 +658,16 @@ video {
   min-height: 20rem;
 }
 
+.min-h-screen {
+  min-height: 100vh;
+}
+
 .w-full {
   width: 100%;
+}
+
+.min-w-\[20rem\] {
+  min-width: 20rem;
 }
 
 .cursor-pointer {
@@ -837,6 +837,11 @@ video {
   padding-right: 1rem;
 }
 
+.px-8 {
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
 .py-1 {
   padding-top: 0.25rem;
   padding-bottom: 0.25rem;
@@ -860,11 +865,6 @@ video {
 .py-8 {
   padding-top: 2rem;
   padding-bottom: 2rem;
-}
-
-.px-8 {
-  padding-left: 2rem;
-  padding-right: 2rem;
 }
 
 .pb-16 {

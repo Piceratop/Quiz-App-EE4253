@@ -4,6 +4,7 @@ import Create from './Create';
 import Explore from './Explore';
 import Landing from './Landing';
 import Practice from './Practice';
+import PracticeEnd from './practice/PracticeEnd';
 import PracticePlay from './practice/PracticePlay';
 import Profile from './Profile';
 import { useAuth } from '../context/AuthContext';
@@ -20,6 +21,7 @@ function Quiz() {
       { path: '/profile', element: <Profile /> },
       { path: '/practice', element: <Practice /> },
       { path: '/practice/play', element: <PracticePlay /> },
+      { path: '/practice/end', element: <PracticeEnd /> },
    ];
 
    return (

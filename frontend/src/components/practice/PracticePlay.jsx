@@ -1,13 +1,16 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuestion } from '../../context/QuestionContext';
 
 function PracticePlay() {
-   const { questions } = useQuestion();
+   const { questions, updateUserResponses, updateUserResponsesEvaluation } = useQuestion();
    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
    const [isSubmitted, setIsSubmitted] = useState(false);
    const [possibleAnswers, setPossibleAnswers] = useState([]);
    const [userChoice, setUserChoice] = useState(null);
-   const [userReponsesEvaluation, setUserResponsesEvaluation] = useState([]);
+   const [userResponses, setUserResponses] = useState([]);
+   const [userResponsesEvaluation, setUserResponsesEvaluation] = useState([]);
+   const navigate = useNavigate();
 
    useEffect(() => {
       setPossibleAnswers(
@@ -62,13 +65,22 @@ function PracticePlay() {
             onClick={(e) => {
                e.preventDefault();
                if (isSubmitted) {
+                  if (currentQuestionIndex === questions.length - 1) {
+                     updateUserResponses(userResponses);
+                     updateUserResponsesEvaluation(userResponsesEvaluation);
+                     navigate('/practice/end')
+                  }
                   setCurrentQuestionIndex(currentQuestionIndex + 1);
                   setIsSubmitted(false);
                   setUserChoice(null);
                } else {
                   setIsSubmitted(true);
+                  setUserResponses([
+                     ...userResponses,
+                     userChoice,
+                  ]);
                   setUserResponsesEvaluation([
-                     ...userReponsesEvaluation,
+                     ...userResponsesEvaluation,
                      questions[currentQuestionIndex].correct_answers.includes(
                         userChoice
                      ),
