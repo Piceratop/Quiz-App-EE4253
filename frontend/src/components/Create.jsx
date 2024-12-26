@@ -11,7 +11,7 @@ function Create() {
    return (
       <div>
          <h2 className="page-title">Create</h2>
-         <form className="my-4 grid grid-cols-3 gap-4">
+         <form className="grid grid-cols-3 gap-4">
             <CreateQuestion
                answerArray={answerArray}
                correctAnswer={correctAnswer}

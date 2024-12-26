@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 .page-title {
-   @apply text-2xl font-bold;
+   @apply text-2xl font-bold my-4;
 }
 
 .choice {

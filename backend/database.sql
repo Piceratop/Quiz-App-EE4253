@@ -44,5 +44,6 @@ CREATE TABLE IF NOT EXISTS WrongResponseRecords (
 -- @block
 
 -- Ignore this block
-SELECT * FROM Questions;
-SELECT * FROM Users;
+-- SELECT * FROM Questions;
+-- SELECT * FROM Users;
+SELECT * FROM WrongResponseRecords;

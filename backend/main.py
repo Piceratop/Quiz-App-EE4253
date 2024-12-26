@@ -155,6 +155,35 @@ def add_question():
         mycursor.close()
         connection.close()
 
+# Add wrong answers
+
+@app.route("/api/wrong-responses", methods=["POST"])
+@require_token
+def add_wrong_responses():
+    user_id = request.token_payload['user_id']
+    try:
+        wrong_responses_data = request.get_json()
+    except Exception as e:
+        return make_response(jsonify({'error': 'Invalid JSON'}), 400)
+
+    connection = pool.get_connection()
+    mycursor = connection.cursor()
+    try:
+        connection.start_transaction()
+        for wrong_response in wrong_responses_data:
+            mycursor.execute("SELECT * FROM WrongResponseRecords WHERE user_id = %s AND question_id = %s", (user_id, wrong_response))
+            if mycursor.fetchone():
+                continue
+            mycursor.execute("INSERT INTO WrongResponseRecords (user_id, question_id) VALUES (%s, %s)", (user_id, wrong_response))
+        connection.commit()
+        return make_response(jsonify({'message': 'Wrong responses added successfully'}), 201)
+    except Exception as e:
+        connection.rollback()
+        return make_response(jsonify({'error': str(e)}), 500)
+    finally:
+        mycursor.close()
+        connection.close()
+
 ### User Management
 
 # Login and Register

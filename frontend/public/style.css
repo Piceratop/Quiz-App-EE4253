@@ -646,6 +646,11 @@ video {
   display: none;
 }
 
+.h-fit {
+  height: -moz-fit-content;
+  height: fit-content;
+}
+
 .h-full {
   height: 100%;
 }
@@ -664,10 +669,6 @@ video {
 
 .w-full {
   width: 100%;
-}
-
-.min-w-\[20rem\] {
-  min-width: 20rem;
 }
 
 .cursor-pointer {
@@ -941,6 +942,10 @@ video {
   color: rgb(255 0 0 / var(--tw-text-opacity, 1));
 }
 
+.line-through {
+  text-decoration-line: line-through;
+}
+
 .opacity-50 {
   opacity: 0.5;
 }
@@ -967,6 +972,8 @@ video {
 }
 
 .page-title {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
   font-size: 1.5rem;
   line-height: 2rem;
   font-weight: 700;

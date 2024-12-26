@@ -7,13 +7,13 @@ export const QuestionContext = createContext({
    userResponsesEvaluation: [],
    updateQuestions: () => {},
    updateUserResponses: () => {},
-   updateUserResponsesEvaluation: () => {},
 });
 
 export const QuestionProvider = ({ children }) => {
    const [state, setState] = useState({
       questions: [],
       totalCount: 0,
+      userResponses: [],
       userResponsesEvaluation: [],
    });
 
@@ -25,12 +25,12 @@ export const QuestionProvider = ({ children }) => {
       });
    };
 
-   const updateUserResponses = (responses) => {
-      setState({ ...state, userResponses: responses });
-   };
-
-   const updateUserResponsesEvaluation = (evaluation) => {
-      setState({ ...state, userResponsesEvaluation: evaluation });
+   const updateUserResponses = (responses, evaluation) => {
+      setState({
+         ...state,
+         userResponses: responses,
+         userResponsesEvaluation: evaluation,
+      });
    };
 
    return (
@@ -39,7 +39,6 @@ export const QuestionProvider = ({ children }) => {
             ...state,
             updateQuestions,
             updateUserResponses,
-            updateUserResponsesEvaluation,
          }}
       >
          {children}

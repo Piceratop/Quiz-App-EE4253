@@ -73,7 +73,7 @@ function AuthPartition({ type }) {
          <p className="mb-2 text-wrong">{error}</p>
          <button
             type="submit"
-            className=" bg-primary text-background p-2 rounded-md"
+            className="my-2 bg-primary text-background p-2 rounded-md"
             onClick={(e) => {
                e.preventDefault();
                if (type === 'Register' && password !== repeatPassword) {
