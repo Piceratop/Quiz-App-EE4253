@@ -97,9 +97,10 @@ def get_questions_set():
         query = "SELECT * FROM Questions ORDER BY RAND() LIMIT %s"
         mycursor.execute(query, (count,))
         questions = mycursor.fetchall()
-        questions_dict = {}
+        questions_dict = []
         for question in questions:
-            questions_dict[question[0]] = {
+            questions_dict.append({
+                "id": question[0],
                 "question": question[1],
                 "question_type": question[2],
                 "correct_answers": question[3],
@@ -108,7 +109,7 @@ def get_questions_set():
                 "correct_count": question[6],
                 "shuffle": question[7],
                 "created_by": question[8]
-            }
+            })
         connection.commit()
         return jsonify(questions_dict)
     except Exception as e:

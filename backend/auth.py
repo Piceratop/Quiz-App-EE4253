@@ -109,7 +109,7 @@ def register_user(username, password):
         conn.commit()
 
         token = generate_jwt_token(user['id'], user['username'])
-        return True, token, user['id'], user['username']
+        return True, (token, user['id'], user['username'])
 
     except mysql.connector.Error as err:
         conn.rollback()
