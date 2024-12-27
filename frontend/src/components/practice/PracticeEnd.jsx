@@ -4,15 +4,23 @@ import { FaXmark, FaCheck } from 'react-icons/fa6';
 import { useQuestion } from '../../context/QuestionContext';
 import apiClient from '../../configs/apiClient';
 
-async function handleUpdateWrongResponses(wrongIds) {
+async function handleUpdateWrongResponses(wrongIds, setType) {
    const token = localStorage.getItem('token');
-   await apiClient.post('/wrong-responses', wrongIds, {
-      headers: { Authorization: `Bearer ${token}` },
-   });
+   console.log(setType);
+   if (setType === 'shuffle') {
+      await apiClient.post('/wrong-responses', wrongIds, {
+         headers: { Authorization: `Bearer ${token}` },
+      });
+   } else if (setType === 'wrong') {
+      await apiClient.delete('/wrong-responses', {
+         data: wrongIds,
+         headers: { Authorization: `Bearer ${token}` },
+      });
+   }
 }
 
 function PracticeEnd() {
-   const { questions, userResponses, userResponsesEvaluation } = useQuestion();
+   const { questions, setType, userResponses, userResponsesEvaluation } = useQuestion();
    const navigate = useNavigate();
    const wrongIds = questions
       .map((question, index) => {
@@ -23,7 +31,7 @@ function PracticeEnd() {
       .filter((id) => id !== undefined);
 
    useEffect(() => {
-      handleUpdateWrongResponses(wrongIds);
+      handleUpdateWrongResponses(wrongIds, setType);
    }, []);
 
    return (

@@ -155,7 +155,78 @@ def add_question():
         mycursor.close()
         connection.close()
 
-# Add wrong answers
+### Wrong Responses
+
+# Get Wrong Responses for a Specified User
+
+@app.route("/api/wrong-responses", methods=["GET"])
+@require_token
+def get_wrong_responses():
+    user_id = request.token_payload['user_id']
+    count = request.args.get('count')
+    
+    # Add logging
+    print(f"Fetching wrong responses for user_id: {user_id}, count: {count}")
+    
+    connection = pool.get_connection()
+    mycursor = connection.cursor()
+
+    try:
+        connection.start_transaction()
+        query = """SELECT q.id, q.question, q.question_type, q.correct_answers, q.possible_answers, q.shuffle, q.created_by
+                    FROM WrongResponseRecords wr
+                    JOIN Questions q ON wr.question_id = q.id
+                    WHERE wr.user_id = %s
+                    ORDER BY RAND()
+                    LIMIT %s"""
+        
+        print(f"Executing query with params: user_id={user_id}, count={count}")
+        
+        mycursor.execute(query, (user_id, int(count)))
+        wrong_responses = mycursor.fetchall()
+        wrong_responses_dict = []
+        for wrong_response in wrong_responses:
+            wrong_responses_dict.append({
+                "id": wrong_response[0],
+                "question": wrong_response[1],
+                "question_type": wrong_response[2],
+                "correct_answers": wrong_response[3],
+                "possible_answers": wrong_response[4],
+                "shuffle": wrong_response[5],
+                "created_by": wrong_response[6]
+            })
+        connection.commit()
+        return jsonify(wrong_responses_dict)
+    except Exception as e:
+        connection.rollback()
+        # Add more detailed error logging
+        print(f"Error fetching wrong responses: {str(e)}")
+        return make_response(jsonify({'error': str(e)}), 500)
+    finally:
+        mycursor.close()
+        connection.close()
+
+@app.route("/api/wrong-responses/count", methods=["GET"])
+@require_token
+def count_wrong_responses():
+    user_id = request.token_payload['user_id']
+    connection = pool.get_connection()
+    mycursor = connection.cursor()
+    try:
+        connection.start_transaction()
+        query = "SELECT COUNT(*) FROM WrongResponseRecords WHERE user_id = %s"
+        mycursor.execute(query, (user_id,))
+        count = mycursor.fetchone()[0]
+        connection.commit()
+        return jsonify({"count": count})
+    except Exception as e:
+        connection.rollback()
+        return make_response(jsonify({'error': str(e)}), 500)
+    finally:
+        mycursor.close()
+        connection.close()
+
+# Add Wrong Responses
 
 @app.route("/api/wrong-responses", methods=["POST"])
 @require_token
@@ -177,6 +248,32 @@ def add_wrong_responses():
             mycursor.execute("INSERT INTO WrongResponseRecords (user_id, question_id) VALUES (%s, %s)", (user_id, wrong_response))
         connection.commit()
         return make_response(jsonify({'message': 'Wrong responses added successfully'}), 201)
+    except Exception as e:
+        connection.rollback()
+        return make_response(jsonify({'error': str(e)}), 500)
+    finally:
+        mycursor.close()
+        connection.close()
+
+# Remove Wrong Responses
+
+@app.route("/api/wrong-responses", methods=["DELETE"])
+@require_token
+def remove_wrong_responses():
+    user_id = request.token_payload['user_id']
+    try:
+        wrong_responses_data = request.get_json()
+    except Exception as e:
+        return make_response(jsonify({'error': 'Invalid JSON'}), 400)
+
+    connection = pool.get_connection()
+    mycursor = connection.cursor()
+    try:
+        connection.start_transaction()
+        for wrong_response in wrong_responses_data:
+            mycursor.execute("DELETE FROM WrongResponseRecords WHERE user_id = %s AND question_id = %s", (user_id, wrong_response))
+        connection.commit()
+        return make_response(jsonify({'message': 'Wrong responses removed successfully'}), 200)
     except Exception as e:
         connection.rollback()
         return make_response(jsonify({'error': str(e)}), 500)

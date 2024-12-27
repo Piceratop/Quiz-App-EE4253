@@ -2,6 +2,7 @@ import { createContext, useState, useContext } from 'react';
 
 export const QuestionContext = createContext({
    questions: [],
+   setType: '',
    totalCount: 0,
    userResponses: [],
    userResponsesEvaluation: [],
@@ -12,14 +13,16 @@ export const QuestionContext = createContext({
 export const QuestionProvider = ({ children }) => {
    const [state, setState] = useState({
       questions: [],
+      setType: '',
       totalCount: 0,
       userResponses: [],
       userResponsesEvaluation: [],
    });
 
-   const updateQuestions = (quiz_data) => {
+   const updateQuestions = (quiz_data, setType) => {
       setState({
          ...state,
+         setType,
          questions: quiz_data,
          totalCount: quiz_data.length,
       });

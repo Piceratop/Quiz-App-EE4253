@@ -43,7 +43,11 @@ CREATE TABLE IF NOT EXISTS WrongResponseRecords (
 
 -- @block
 
--- Ignore this block
--- SELECT * FROM Questions;
--- SELECT * FROM Users;
+-- SELECT q.id, q.question, q.question_type, q.correct_answers, q.possible_answers, q.shuffle, q.created_by
+-- FROM WrongResponseRecords wr
+-- JOIN Questions q ON wr.question_id = q.id
+-- WHERE wr.user_id = 4
+-- ORDER BY RAND()
+-- LIMIT 1;
+
 SELECT * FROM WrongResponseRecords;
