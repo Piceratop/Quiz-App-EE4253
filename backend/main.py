@@ -1,4 +1,3 @@
-from mailbox import Message
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify, make_response
 from flask_cors import CORS
