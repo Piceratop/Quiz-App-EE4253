@@ -41,20 +41,31 @@ def get_questions():
         if request.args.get("page"):
             page = int(request.args.get("page"))
             query += f" ORDER BY id DESC LIMIT {(page - 1) * 5}, 5"
+        
         mycursor.execute(query)
         questions = mycursor.fetchall()
+        
         questions_dict = {}
         for question in questions:
+            # Fetch answers for the question
+            mycursor.execute("SELECT answer, correct FROM Answers WHERE question_id = %s", (question[0],))
+            answers = mycursor.fetchall()
+            
+            # Prepare correct and possible answers
+            correct_answers = [ans[0] for ans in answers if ans[1]]
+            possible_answers = [ans[0] for ans in answers]
+            
             questions_dict[question[0]] = {
                 "question": question[1],
                 "question_type": question[2],
-                "correct_answers": question[3],
-                "possible_answers": question[4],
-                "attempt_count": question[5],
-                "correct_count": question[6],
-                "shuffle": question[7],
-                "created_by": question[8]
+                "correct_answers": json.dumps(correct_answers),
+                "possible_answers": json.dumps(possible_answers),
+                "attempt_count": question[3],
+                "correct_count": question[4],
+                "shuffle": question[5],
+                "created_by": question[6]
             }
+        
         connection.commit()
         return jsonify(questions_dict)
     except Exception as e:
@@ -97,19 +108,29 @@ def get_questions_set():
         query = "SELECT * FROM Questions ORDER BY RAND() LIMIT %s"
         mycursor.execute(query, (count,))
         questions = mycursor.fetchall()
+        
         questions_dict = []
         for question in questions:
+            # Fetch answers for the question
+            mycursor.execute("SELECT answer, correct FROM Answers WHERE question_id = %s", (question[0],))
+            answers = mycursor.fetchall()
+            
+            # Prepare correct and possible answers
+            correct_answers = [ans[0] for ans in answers if ans[1]]
+            possible_answers = [ans[0] for ans in answers]
+            
             questions_dict.append({
                 "id": question[0],
                 "question": question[1],
                 "question_type": question[2],
-                "correct_answers": question[3],
-                "possible_answers": question[4],
-                "attempt_count": question[5],
-                "correct_count": question[6],
-                "shuffle": question[7],
-                "created_by": question[8]
+                "correct_answers": json.dumps(correct_answers),
+                "possible_answers": json.dumps(possible_answers),
+                "attempt_count": question[3],
+                "correct_count": question[4],
+                "shuffle": question[5],
+                "created_by": question[6]
             })
+        
         connection.commit()
         return jsonify(questions_dict)
     except Exception as e:
@@ -118,7 +139,6 @@ def get_questions_set():
     finally:
         mycursor.close()
         connection.close()
-    
 
 # Add Question
 
@@ -133,21 +153,32 @@ def add_question():
     connection = pool.get_connection()
     mycursor = connection.cursor()
     try:
-        correct_answers = json.dumps(question_data['correct_answers'])
-        possible_answers = json.dumps(question_data['possible_answers'])
-        
-        query = "INSERT INTO Questions(question, question_type, correct_answers, possible_answers, shuffle, created_by) VALUES (%s, %s, %s, %s, %s, %s)"
         connection.start_transaction()
+        
+        # Insert question
+        query = "INSERT INTO Questions(question, question_type, attempt_count, correct_count, shuffle, created_by) VALUES (%s, %s, 0, 0, %s, %s)"
         mycursor.execute(query, (
             question_data['question'], 
             question_data['question_type'], 
-            correct_answers, 
-            possible_answers,
             question_data.get('shuffle', True),
             request.token_payload['user_id']
         ))
+        question_id = mycursor.lastrowid
+        
+        # Insert answers
+        correct_answers = question_data.get('correct_answers', [])
+        possible_answers = question_data.get('possible_answers', [])
+        
+        # Combine and deduplicate answers
+        all_answers = list(set(correct_answers + possible_answers))
+        
+        for answer in all_answers:
+            is_correct = answer in correct_answers
+            ans_query = "INSERT INTO Answers(question_id, answer, correct) VALUES (%s, %s, %s)"
+            mycursor.execute(ans_query, (question_id, answer, is_correct))
+        
         connection.commit()
-        return make_response(jsonify({'message': 'Question added successfully', 'question_id': mycursor.lastrowid}), 201)
+        return make_response(jsonify({'message': 'Question added successfully', 'question_id': question_id}), 201)
     except Exception as e:
         connection.rollback()
         return make_response(jsonify({'error': str(e)}), 500)
@@ -173,7 +204,7 @@ def get_wrong_responses():
 
     try:
         connection.start_transaction()
-        query = """SELECT q.id, q.question, q.question_type, q.correct_answers, q.possible_answers, q.shuffle, q.created_by
+        query = """SELECT q.* 
                     FROM WrongResponseRecords wr
                     JOIN Questions q ON wr.question_id = q.id
                     WHERE wr.user_id = %s
@@ -184,17 +215,29 @@ def get_wrong_responses():
         
         mycursor.execute(query, (user_id, int(count)))
         wrong_responses = mycursor.fetchall()
+        
         wrong_responses_dict = []
         for wrong_response in wrong_responses:
+            # Fetch answers for the question
+            mycursor.execute("SELECT answer, correct FROM Answers WHERE question_id = %s", (wrong_response[0],))
+            answers = mycursor.fetchall()
+            
+            # Prepare correct and possible answers
+            correct_answers = [ans[0] for ans in answers if ans[1]]
+            possible_answers = [ans[0] for ans in answers]
+            
             wrong_responses_dict.append({
                 "id": wrong_response[0],
                 "question": wrong_response[1],
                 "question_type": wrong_response[2],
-                "correct_answers": wrong_response[3],
-                "possible_answers": wrong_response[4],
+                "correct_answers": json.dumps(correct_answers),
+                "possible_answers": json.dumps(possible_answers),
+                "attempt_count": wrong_response[3],
+                "correct_count": wrong_response[4],
                 "shuffle": wrong_response[5],
                 "created_by": wrong_response[6]
             })
+        
         connection.commit()
         return jsonify(wrong_responses_dict)
     except Exception as e:

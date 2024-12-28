@@ -20,7 +20,8 @@ async function handleUpdateWrongResponses(wrongIds, setType) {
 }
 
 function PracticeEnd() {
-   const { questions, setType, userResponses, userResponsesEvaluation } = useQuestion();
+   const { questions, setType, userResponses, userResponsesEvaluation } =
+      useQuestion();
    const navigate = useNavigate();
    const wrongIds = questions
       .map((question, index) => {

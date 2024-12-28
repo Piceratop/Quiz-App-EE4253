@@ -1,12 +1,12 @@
 -- @block
 
--- Run this block to reset the database
+-- Resets the database
 DROP TABLE IF EXISTS Questions;
 DROP TABLE IF EXISTS Users;
 
 -- @block
 
--- Run this block to create users table
+-- Creates users table
 CREATE TABLE IF NOT EXISTS Users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) UNIQUE NOT NULL,
@@ -17,13 +17,11 @@ CREATE TABLE IF NOT EXISTS Users (
 
 -- @block
 
--- Run this block to create questions table
+-- Creates questions table
 CREATE TABLE IF NOT EXISTS Questions (
    id INTEGER PRIMARY KEY AUTO_INCREMENT,
    question TEXT NOT NULL,
    question_type TEXT NOT NULL CHECK (question_type IN ('MCQ', 'FillIn')),
-   correct_answers JSON,
-   possible_answers JSON,
    attempt_count INTEGER DEFAULT 0,
    correct_count INTEGER DEFAULT 0,
    shuffle BOOLEAN DEFAULT 1,
@@ -33,6 +31,18 @@ CREATE TABLE IF NOT EXISTS Questions (
 
 -- @block
 
+-- Creates answers table
+CREATE TABLE IF NOT EXISTS Answers (
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    question_id INTEGER,
+    answer TEXT,
+    correct BOOLEAN,
+    FOREIGN KEY (question_id) REFERENCES Questions(id)
+);
+
+-- @block
+
+-- Creates wrong response records
 CREATE TABLE IF NOT EXISTS WrongResponseRecords (
     user_id INT,
     question_id INT,
@@ -43,11 +53,15 @@ CREATE TABLE IF NOT EXISTS WrongResponseRecords (
 
 -- @block
 
--- SELECT q.id, q.question, q.question_type, q.correct_answers, q.possible_answers, q.shuffle, q.created_by
--- FROM WrongResponseRecords wr
--- JOIN Questions q ON wr.question_id = q.id
--- WHERE wr.user_id = 4
--- ORDER BY RAND()
--- LIMIT 1;
+-- Create trigger for question deletion
+DROP TRIGGER IF EXISTS before_question_delete;
 
-SELECT * FROM WrongResponseRecords;
+DELIMITER //
+CREATE TRIGGER before_question_delete
+BEFORE DELETE ON Questions
+FOR EACH ROW
+BEGIN
+    DELETE FROM Answers WHERE question_id = OLD.id;
+    DELETE FROM WrongResponseRecords WHERE question_id = OLD.id;
+END//
+DELIMITER ;
