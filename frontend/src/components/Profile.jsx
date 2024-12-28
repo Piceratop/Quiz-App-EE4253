@@ -1,6 +1,19 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import apiClient from '../configs/apiClient';
+import MultipleChoiceQuestion from './questions/MultipleChoiceQuestion';
+import SearchBar from './SearchBar';
+
+async function handleGetUserQuestions(id, page, search, setUserQuestions) {
+   const token = localStorage.getItem('token');
+   const response = await apiClient.get(
+      `/questions?user=${id}&search=${search}&page=${page}`,
+      {
+         headers: { Authorization: `Bearer ${token}` },
+      }
+   );
+   setUserQuestions(response.data);
+}
 
 async function handleUpdateUsername(
    id,
@@ -54,6 +67,7 @@ async function handleUpdatePassword(
 }
 
 function Profile() {
+   // User data
    const { id, user, updateUser } = useAuth();
    const [username, setUsername] = useState('');
    const [oldPassword, setOldPassword] = useState('');
@@ -61,9 +75,15 @@ function Profile() {
    const [repeatPassword, setRepeatPassword] = useState('');
    const [confirmation, setConfirmation] = useState('');
    const [error, setError] = useState('');
+   // User's questions
+   const [page, setPage] = useState(1);
+   const [totalPage, setTotalPage] = useState(1);
+   const [search, setSearch] = useState('');
+   const [userQuestions, setUserQuestions] = useState({});
 
    useEffect(() => {
       setUsername(user);
+      handleGetUserQuestions(id, page, search, setUserQuestions);
    }, [user]);
 
    const fieldsetStyle =
@@ -160,6 +180,28 @@ function Profile() {
             <p>{confirmation}</p>
             <p className="text-wrong">{error}</p>
          </form>
+         <div>
+            <h3 className="text-xl font-bold my-4">Your Questions</h3>
+            <SearchBar
+               search={search}
+               setPage={setPage}
+               setQuestions={setUserQuestions}
+               setSearch={setSearch}
+               setTotalPage={setTotalPage}
+            />
+            {Object.entries(userQuestions)
+               .sort(([, a], [, b]) => b - a)
+               .map(([key, value]) => (
+                  <MultipleChoiceQuestion
+                     key={key}
+                     correctAnswers={value.correct_answers}
+                     playable={false}
+                     possibleAnswers={value.possible_answers}
+                     question={value.question}
+                     shuffle={value.shuffle}
+                  />
+               ))}
+         </div>
       </div>
    );
 }

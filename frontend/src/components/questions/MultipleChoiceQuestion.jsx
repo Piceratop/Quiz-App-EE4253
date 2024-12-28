@@ -1,28 +1,10 @@
 import { useEffect, useState } from 'react';
 
-/**
- * QuestionBox is a component that renders a single question and its choices.
- *
- * It takes multiple props:
- * - question: the question string
- * - choices: a stringified array of choices
- * - correctAnswers: the correct answer(s) for the question
- * - possibleAnswers: array of possible answers
- * - shuffle: whether to randomize the order of answers
- *
- * For MCQ (Multiple Choice Question) type:
- * - Renders the question in a large, centered box with a border
- * - Displays choices in a grid
- * - Allows selecting and submitting an answer
- * - Provides visual feedback on correct/incorrect answers
- *
- * @param {{ question: string, correctAnswers: string[], possibleAnswers: string[], shuffle: boolean }} props
- * @returns {JSX.Element}
- */
-export default function QuestionBox({
-   question,
+export default function MultipleChoiceQuestion({
    correctAnswers,
+   playable = true,
    possibleAnswers,
+   question,
    shuffle,
 }) {
    const [choiceArray, setChoiceArray] = useState([]);
@@ -34,7 +16,7 @@ export default function QuestionBox({
       else setChoiceArray(JSON.parse(possibleAnswers));
    }, []);
 
-   const [isSubmitted, setIsSubmitted] = useState(false);
+   const [isSubmitted, setIsSubmitted] = useState(!playable);
    const [userChoice, setUserChoice] = useState(null);
 
    return (
@@ -48,25 +30,27 @@ export default function QuestionBox({
             <div className="text-2xl flex items-center justify-center py-12 px-4">
                <p className="text-center">{question}</p>
             </div>
-            <button
-               className={`w-full py-2 transition duration-400 ease-in-out ${
-                  isSubmitted
-                     ? 'bg-background text-primary '
-                     : userChoice
-                     ? 'bg-primary text-background'
-                     : 'bg-gray-400 text-background disabled'
-               }`}
-               type="submit"
-               onClick={(e) => {
-                  e.preventDefault();
-                  if (userChoice) {
-                     setIsSubmitted(true);
-                  }
-               }}
-               disabled={isSubmitted || !userChoice}
-            >
-               {isSubmitted ? 'Submitted' : 'Submit'}
-            </button>
+            {playable && (
+               <button
+                  className={`w-full py-2 transition duration-400 ease-in-out ${
+                     isSubmitted
+                        ? 'bg-background text-primary '
+                        : userChoice
+                          ? 'bg-primary text-background'
+                          : 'bg-gray-400 text-background disabled'
+                  }`}
+                  type="submit"
+                  onClick={(e) => {
+                     e.preventDefault();
+                     if (userChoice) {
+                        setIsSubmitted(true);
+                     }
+                  }}
+                  disabled={isSubmitted || !userChoice}
+               >
+                  {isSubmitted ? 'Submitted' : 'Submit'}
+               </button>
+            )}
          </div>
          <div
             className="grid gap-2"
@@ -81,11 +65,11 @@ export default function QuestionBox({
                         ? correctAnswers.includes(choice)
                            ? 'bg-primary text-background'
                            : userChoice === choice
-                           ? 'bg-wrong text-background border-wrong'
-                           : ''
+                             ? 'bg-wrong text-background border-wrong'
+                             : ''
                         : userChoice === choice
-                        ? 'bg-secondary'
-                        : ''
+                          ? 'bg-secondary'
+                          : ''
                   } ${userChoice === choice ? 'font-bold' : ''}`}
                   key={choice}
                >

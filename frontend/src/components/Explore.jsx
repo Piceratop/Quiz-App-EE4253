@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 import apiClient from '../configs/apiClient';
 import MultipleChoiceQuestion from './questions/MultipleChoiceQuestion';
+import SearchBar from './SearchBar';
 
 async function getQuestions(page = 1, search = '') {
    const token = localStorage.getItem('token');
@@ -37,30 +38,7 @@ async function fetchQuestionsCount(search, setTotalPage) {
    setTotalPage(Math.ceil(data / 5));
 }
 
-function SearchBar({ search, setPage, setQuestions, setSearch, setTotalPage }) {
-   return (
-      <form className="mt-2 flex items-center border border-primary rounded-md">
-         <input
-            type="text"
-            placeholder="Search for questions..."
-            className="w-full p-2 bg-transparent outline-none"
-            onChange={(e) => setSearch(e.target.value)}
-         />
-         <button
-            type="submit"
-            className="p-2 bg-primary text-background border-l border-primary"
-            onClick={(e) => {
-               e.preventDefault();
-               fetchQuestionsCount(search, setTotalPage);
-               setPage(1);
-               fetchQuestions(1, search, setQuestions);
-            }}
-         >
-            Search
-         </button>
-      </form>
-   );
-}
+export { fetchQuestions, fetchQuestionsCount };
 
 function Explore() {
    const [page, setPage] = useState(1);

@@ -26,8 +26,8 @@ function QuestionDisplay({ answerArray, correctAnswer, question }) {
                            answer.length === 0
                               ? '1.25rem'
                               : Math.max(
-                                   1.25,
-                                   3 - Math.ceil(answer.length / 4) * 0.25
+                                   1,
+                                   2.5 - Math.ceil(answer.length / 4) * 0.25
                                 ) + 'rem',
                         opacity: answer.length === 0 ? 0.5 : 1,
                      }}
