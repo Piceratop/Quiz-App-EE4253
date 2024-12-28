@@ -9,6 +9,7 @@ function PracticePlay() {
       userResponsesEvaluation,
       updateUserResponses,
    } = useQuestion();
+   const [correctAnswersArray, setCorrectAnswersArray] = useState([]);
    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
    const [isSubmitted, setIsSubmitted] = useState(false);
    const [possibleAnswers, setPossibleAnswers] = useState([]);
@@ -20,8 +21,17 @@ function PracticePlay() {
    }, []);
 
    useEffect(() => {
-      setPossibleAnswers(
-         JSON.parse(questions[currentQuestionIndex].possible_answers)
+      let tempPossibleAnswers = JSON.parse(
+         questions[currentQuestionIndex].possible_answers
+      );
+      if (questions[currentQuestionIndex].shuffle) {
+         tempPossibleAnswers = tempPossibleAnswers.sort(
+            () => Math.random() - 0.5
+         );
+      }
+      setPossibleAnswers(tempPossibleAnswers);
+      setCorrectAnswersArray(
+         JSON.parse(questions[currentQuestionIndex].correct_answers)
       );
    }, [currentQuestionIndex]);
 
@@ -41,9 +51,7 @@ function PracticePlay() {
                   key={i}
                   className={`p-4 min-h-[12rem] h-full border-4 border-primary text-center flex justify-center items-center text-xl overflow-auto transition duration-400 ease-in-out ${
                      isSubmitted
-                        ? questions[
-                             currentQuestionIndex
-                          ].correct_answers.includes(answer)
+                        ? correctAnswersArray.includes(answer)
                            ? 'bg-primary text-background'
                            : userChoice == answer
                              ? 'bg-wrong text-background border-wrong'
@@ -52,7 +60,6 @@ function PracticePlay() {
                           ? 'bg-secondary'
                           : ''
                   } ${userChoice === answer ? 'font-bold' : ''}`}
-                  // style={{ wordBreak: 'break-word' }}
                >
                   <input
                      type="radio"
@@ -74,8 +81,6 @@ function PracticePlay() {
                e.preventDefault();
                if (isSubmitted) {
                   if (currentQuestionIndex === questions.length - 1) {
-                     // updateUserResponses(userResponses);
-                     // updateUserResponsesEvaluation(userResponsesEvaluation);
                      navigate('/practice/end');
                   } else {
                      setCurrentQuestionIndex(currentQuestionIndex + 1);
@@ -88,9 +93,7 @@ function PracticePlay() {
                      [...userResponses, userChoice],
                      [
                         ...userResponsesEvaluation,
-                        questions[
-                           currentQuestionIndex
-                        ].correct_answers.includes(userChoice),
+                        correctAnswersArray.includes(userChoice),
                      ]
                   );
                }

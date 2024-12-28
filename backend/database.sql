@@ -1,15 +1,24 @@
 -- @block
 
+-- Drops database if exists and creates new database with UTF-8 support
+DROP DATABASE IF EXISTS quiz_app;
+CREATE DATABASE quiz_app CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE quiz_app;
+
+-- @block
+
 -- Resets the database
+DROP TABLE IF EXISTS WrongResponseRecords;
+DROP TABLE IF EXISTS Answers;
 DROP TABLE IF EXISTS Questions;
 DROP TABLE IF EXISTS Users;
 
 -- @block
 
--- Creates users table
+-- Creates users table with UTF-8 support
 CREATE TABLE IF NOT EXISTS Users (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(50) UNIQUE NOT NULL,
+    username VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     role ENUM('user', 'admin') DEFAULT 'user'
@@ -17,11 +26,11 @@ CREATE TABLE IF NOT EXISTS Users (
 
 -- @block
 
--- Creates questions table
+-- Creates questions table with UTF-8 support
 CREATE TABLE IF NOT EXISTS Questions (
    id INTEGER PRIMARY KEY AUTO_INCREMENT,
-   question TEXT NOT NULL,
-   question_type TEXT NOT NULL CHECK (question_type IN ('MCQ', 'FillIn')),
+   question TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+   question_type TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL CHECK (question_type IN ('MCQ', 'FillIn')),
    attempt_count INTEGER DEFAULT 0,
    correct_count INTEGER DEFAULT 0,
    shuffle BOOLEAN DEFAULT 1,
@@ -31,11 +40,11 @@ CREATE TABLE IF NOT EXISTS Questions (
 
 -- @block
 
--- Creates answers table
+-- Creates answers table with UTF-8 support
 CREATE TABLE IF NOT EXISTS Answers (
     id INTEGER PRIMARY KEY AUTO_INCREMENT,
     question_id INTEGER,
-    answer TEXT,
+    answer TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
     correct BOOLEAN,
     FOREIGN KEY (question_id) REFERENCES Questions(id)
 );

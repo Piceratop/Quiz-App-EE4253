@@ -20,7 +20,10 @@ def get_db_connection():
             host=os.getenv('DB_HOST', 'localhost'),
             user=os.getenv('DB_USER'),
             password=os.getenv('DB_PASSWORD'),
-            database=os.getenv('DB_NAME')
+            database=os.getenv('DB_NAME'),
+            charset='utf8mb4',  
+            use_unicode=True,   
+            collation='utf8mb4_unicode_ci'  
         )
     except mysql.connector.Error as err:
         print(f"Database connection error: {err}")
@@ -79,169 +82,115 @@ def require_token(func):
     return decorated_function
 
 def register_user(username, password):
-    if not validate_password(password):
-        return False, "Password does not meet complexity requirements"
+    connection = get_db_connection()
+    if not connection:
+        return None
 
-    hashed_password = hash_password(password)
-
-    conn = get_db_connection()
-    if not conn:
-        return False, "Database connection error"
-
+    cursor = connection.cursor(dictionary=True)
+    
     try:
-        conn.start_transaction()
+        cursor.execute("SELECT * FROM Users WHERE LOWER(username) = LOWER(%s)", (username,))
+        existing_user = cursor.fetchone()
         
-        cursor = conn.cursor(dictionary=True)
+        if existing_user:
+            return None
+
+        hashed_password = hash_password(password)
+
+        insert_query = "INSERT INTO Users (username, password_hash, role) VALUES (%s, %s, %s)"
+        cursor.execute(insert_query, (username, hashed_password, 'user'))
         
-        cursor.execute("SELECT * FROM Users WHERE username = %s", (username,))
-        if cursor.fetchone():
-            conn.rollback()
-            return False, "Username already exists"
-
-        cursor.execute(
-            "INSERT INTO Users (username, password_hash, role) VALUES (%s, %s, %s)", 
-            (username, hashed_password, 'user')
-        )
-
-        cursor.execute("SELECT * FROM Users WHERE username = %s", (username,))
-        user = cursor.fetchone()
-
-        conn.commit()
-
-        token = generate_jwt_token(user['id'], user['username'])
-        return True, (token, user['id'], user['username'])
+        connection.commit()
+        user_id = cursor.lastrowid
+        
+        token = generate_jwt_token(user_id, username)
+        return True, (token, user_id, username)
 
     except mysql.connector.Error as err:
-        conn.rollback()
-        print(f"Registration error: {err}")
+        print(f"Error registering user: {err}")
+        connection.rollback()
         return False, "Registration failed"
-    
     finally:
-        if conn.is_connected():
-            cursor.close()
-            conn.close()
+        cursor.close()
+        connection.close()
 
 def login_user(username, password):
-    conn = get_db_connection()
-    if not conn:
-        return False, "Database connection error"
+    connection = get_db_connection()
+    if not connection:
+        return None
 
+    cursor = connection.cursor(dictionary=True)
+    
     try:
-        conn.start_transaction()
-        
-        cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM Users WHERE username = %s", (username,))
+        cursor.execute("SELECT * FROM Users WHERE LOWER(username) = LOWER(%s)", (username,))
         user = cursor.fetchone()
-
-        if not user:
-            conn.rollback()
-            return False, "User not found"
-
-        if not verify_password(password, user['password_hash']):
-            conn.rollback()
-            return False, "Invalid credentials"
-
-        conn.commit()
-
-        token = generate_jwt_token(user['id'], user['username'])
-        return True, (token, user['id'])
+        
+        if user and verify_password(password, user['password_hash']):
+            token = generate_jwt_token(user['id'], user['username'])
+            return True, (token, user['id'], user['username'])
+        
+        return False, "Invalid credentials"
 
     except mysql.connector.Error as err:
-        conn.rollback()
-        print(f"Login error: {err}")
+        print(f"Error logging in: {err}")
         return False, "Login failed"
-    
     finally:
-        if conn.is_connected():
-            cursor.close()
-            conn.close()
+        cursor.close()
+        connection.close()
 
 def update_username(user_id, new_username):
-    if not new_username or len(new_username) < 3:
-        return False, "Username must be at least 3 characters long"
+    connection = get_db_connection()
+    if not connection:
+        return False
 
-    conn = get_db_connection()
-    if not conn:
-        return False, "Database connection error"
-
+    cursor = connection.cursor(dictionary=True)
+    
     try:
-        conn.start_transaction()
+        cursor.execute("SELECT * FROM Users WHERE LOWER(username) = LOWER(%s)", (new_username,))
+        existing_user = cursor.fetchone()
         
-        cursor = conn.cursor(dictionary=True)
-        
-        cursor.execute("SELECT * FROM Users WHERE username = %s", (new_username,))
-        if cursor.fetchone():
-            conn.rollback()
+        if existing_user:
             return False, "Username already exists"
 
-        cursor.execute(
-            "UPDATE Users SET username = %s WHERE id = %s", 
-            (new_username, user_id)
-        )
-
-        if cursor.rowcount == 0:
-            conn.rollback()
-            return False, "User not found"
-
-        conn.commit()
-
+        update_query = "UPDATE Users SET username = %s WHERE id = %s"
+        cursor.execute(update_query, (new_username, user_id))
+        
+        connection.commit()
         return True, "Username updated successfully"
 
     except mysql.connector.Error as err:
-        conn.rollback()
-        print(f"Username update error: {err}")
+        print(f"Error updating username: {err}")
+        connection.rollback()
         return False, "Username update failed"
-    
     finally:
-        if conn.is_connected():
-            cursor.close()
-            conn.close()
+        cursor.close()
+        connection.close()
 
 def update_password(user_id, old_password, new_password):
-    if not validate_password(new_password):
-        return False, "New password does not meet complexity requirements"
+    connection = get_db_connection()
+    if not connection:
+        return False
 
-    conn = get_db_connection()
-    if not conn:
-        return False, "Database connection error"
-
+    cursor = connection.cursor(dictionary=True)
+    
     try:
-        conn.start_transaction()
-        
-        cursor = conn.cursor(dictionary=True)
-        
-        cursor.execute("SELECT * FROM Users WHERE id = %s", (user_id,))
+        cursor.execute("SELECT password_hash FROM Users WHERE id = %s", (user_id,))
         user = cursor.fetchone()
-
-        if not user:
-            conn.rollback()
-            return False, "User not found"
-
-        if not verify_password(old_password, user['password_hash']):
-            conn.rollback()
+        
+        if not user or not verify_password(old_password, user['password_hash']):
             return False, "The old password is incorrect"
 
-        new_hashed_password = hash_password(new_password)
-
-        cursor.execute(
-            "UPDATE Users SET password_hash = %s WHERE id = %s", 
-            (new_hashed_password, user_id)
-        )
-
-        if cursor.rowcount == 0:
-            conn.rollback()
-            return False, "Password update failed"
-
-        conn.commit()
-
+        hashed_new_password = hash_password(new_password)
+        update_query = "UPDATE Users SET password_hash = %s WHERE id = %s"
+        cursor.execute(update_query, (hashed_new_password, user_id))
+        
+        connection.commit()
         return True, "Password updated successfully"
 
     except mysql.connector.Error as err:
-        conn.rollback()
-        print(f"Password update error: {err}")
+        print(f"Error updating password: {err}")
+        connection.rollback()
         return False, "Password update failed"
-    
     finally:
-        if conn.is_connected():
-            cursor.close()
-            conn.close()
+        cursor.close()
+        connection.close()

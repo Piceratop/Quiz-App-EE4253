@@ -8,12 +8,14 @@ export default function MultipleChoiceQuestion({
    shuffle,
 }) {
    const [choiceArray, setChoiceArray] = useState([]);
+   const [correctAnswersArray, setCorrectAnswersArray] = useState([]);
    useEffect(() => {
       if (shuffle)
          setChoiceArray(
             JSON.parse(possibleAnswers).sort(() => Math.random() - 0.5)
          );
       else setChoiceArray(JSON.parse(possibleAnswers));
+      setCorrectAnswersArray(JSON.parse(correctAnswers));
    }, []);
 
    const [isSubmitted, setIsSubmitted] = useState(!playable);
@@ -62,7 +64,7 @@ export default function MultipleChoiceQuestion({
                <label
                   className={`flex items-center justify-center py-8 px-4 border border-primary text-center text-lg transition duration-400 ease-in-out ${
                      isSubmitted
-                        ? correctAnswers.includes(choice)
+                        ? correctAnswersArray.includes(choice)
                            ? 'bg-primary text-background'
                            : userChoice === choice
                              ? 'bg-wrong text-background border-wrong'

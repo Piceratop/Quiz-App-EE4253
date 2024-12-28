@@ -21,7 +21,10 @@ pool = MySQLConnectionPool(
     user=os.getenv("DB_USER"),
     passwd=os.getenv("DB_PASSWORD"),
     database=os.getenv("DB_NAME"),
-    port=int(os.getenv("DB_PORT"))
+    port=int(os.getenv("DB_PORT")),
+    charset='utf8mb4',  
+    use_unicode=True,   
+    collation='utf8mb4_unicode_ci'  
 )
 
 ### Question Management
@@ -31,7 +34,8 @@ pool = MySQLConnectionPool(
 @app.route("/api/questions", methods=["GET"])
 def get_questions():
     connection = pool.get_connection()
-    mycursor = connection.cursor()
+    # Use dictionary cursor to handle Unicode more robustly
+    mycursor = connection.cursor(dictionary=True)
     try:
         connection.start_transaction()
         query = "SELECT * FROM Questions"
@@ -47,26 +51,28 @@ def get_questions():
         
         mycursor.execute(query)
         questions = mycursor.fetchall()
+
+
         
         questions_dict = {}
         for question in questions:
             # Fetch answers for the question
-            mycursor.execute("SELECT answer, correct FROM Answers WHERE question_id = %s", (question[0],))
+            mycursor.execute("SELECT answer, correct FROM Answers WHERE question_id = %s", (question['id'],))
             answers = mycursor.fetchall()
-            
+
             # Prepare correct and possible answers
-            correct_answers = [ans[0] for ans in answers if ans[1]]
-            possible_answers = [ans[0] for ans in answers]
-            
-            questions_dict[question[0]] = {
-                "question": question[1],
-                "question_type": question[2],
+            correct_answers = [ans['answer'] for ans in answers if ans['correct']]
+            possible_answers = [ans['answer'] for ans in answers]
+
+            questions_dict[question['id']] = {
+                "question": question['question'],
+                "question_type": question['question_type'],
                 "correct_answers": json.dumps(correct_answers),
                 "possible_answers": json.dumps(possible_answers),
-                "attempt_count": question[3],
-                "correct_count": question[4],
-                "shuffle": question[5],
-                "created_by": question[6]
+                "attempt_count": question['attempt_count'],
+                "correct_count": question['correct_count'],
+                "shuffle": question['shuffle'],
+                "created_by": question['created_by']
             }
         
         connection.commit()
@@ -105,7 +111,7 @@ def get_questions_set():
     count = int(request.args.get("count"))
 
     connection = pool.get_connection()
-    mycursor = connection.cursor()
+    mycursor = connection.cursor(dictionary=True)
     try:
         connection.start_transaction()
         query = "SELECT * FROM Questions ORDER BY RAND() LIMIT %s"
@@ -115,23 +121,23 @@ def get_questions_set():
         questions_dict = []
         for question in questions:
             # Fetch answers for the question
-            mycursor.execute("SELECT answer, correct FROM Answers WHERE question_id = %s", (question[0],))
+            mycursor.execute("SELECT answer, correct FROM Answers WHERE question_id = %s", (question['id'],))
             answers = mycursor.fetchall()
             
             # Prepare correct and possible answers
-            correct_answers = [ans[0] for ans in answers if ans[1]]
-            possible_answers = [ans[0] for ans in answers]
+            correct_answers = [ans['answer'] for ans in answers if ans['correct']]
+            possible_answers = [ans['answer'] for ans in answers]
             
             questions_dict.append({
-                "id": question[0],
-                "question": question[1],
-                "question_type": question[2],
+                "id": question['id'],
+                "question": question['question'],
+                "question_type": question['question_type'],
                 "correct_answers": json.dumps(correct_answers),
                 "possible_answers": json.dumps(possible_answers),
-                "attempt_count": question[3],
-                "correct_count": question[4],
-                "shuffle": question[5],
-                "created_by": question[6]
+                "attempt_count": question['attempt_count'],
+                "correct_count": question['correct_count'],
+                "shuffle": question['shuffle'],
+                "created_by": question['created_by']
             })
         
         connection.commit()
@@ -154,7 +160,7 @@ def add_question():
         return make_response(jsonify({'error': 'Invalid JSON'}), 400)
     
     connection = pool.get_connection()
-    mycursor = connection.cursor()
+    mycursor = connection.cursor(dictionary=True)
     try:
         connection.start_transaction()
         
@@ -203,8 +209,7 @@ def get_wrong_responses():
     print(f"Fetching wrong responses for user_id: {user_id}, count: {count}")
     
     connection = pool.get_connection()
-    mycursor = connection.cursor()
-
+    mycursor = connection.cursor(dictionary=True)
     try:
         connection.start_transaction()
         query = """SELECT q.* 
@@ -222,23 +227,23 @@ def get_wrong_responses():
         wrong_responses_dict = []
         for wrong_response in wrong_responses:
             # Fetch answers for the question
-            mycursor.execute("SELECT answer, correct FROM Answers WHERE question_id = %s", (wrong_response[0],))
+            mycursor.execute("SELECT answer, correct FROM Answers WHERE question_id = %s", (wrong_response['id'],))
             answers = mycursor.fetchall()
             
             # Prepare correct and possible answers
-            correct_answers = [ans[0] for ans in answers if ans[1]]
-            possible_answers = [ans[0] for ans in answers]
+            correct_answers = [ans['answer'] for ans in answers if ans['correct']]
+            possible_answers = [ans['answer'] for ans in answers]
             
             wrong_responses_dict.append({
-                "id": wrong_response[0],
-                "question": wrong_response[1],
-                "question_type": wrong_response[2],
+                "id": wrong_response['id'],
+                "question": wrong_response['question'],
+                "question_type": wrong_response['question_type'],
                 "correct_answers": json.dumps(correct_answers),
                 "possible_answers": json.dumps(possible_answers),
-                "attempt_count": wrong_response[3],
-                "correct_count": wrong_response[4],
-                "shuffle": wrong_response[5],
-                "created_by": wrong_response[6]
+                "attempt_count": wrong_response['attempt_count'],
+                "correct_count": wrong_response['correct_count'],
+                "shuffle": wrong_response['shuffle'],
+                "created_by": wrong_response['created_by']
             })
         
         connection.commit()
@@ -284,7 +289,7 @@ def add_wrong_responses():
         return make_response(jsonify({'error': 'Invalid JSON'}), 400)
 
     connection = pool.get_connection()
-    mycursor = connection.cursor()
+    mycursor = connection.cursor(dictionary=True)
     try:
         connection.start_transaction()
         for wrong_response in wrong_responses_data:
@@ -313,7 +318,7 @@ def remove_wrong_responses():
         return make_response(jsonify({'error': 'Invalid JSON'}), 400)
 
     connection = pool.get_connection()
-    mycursor = connection.cursor()
+    mycursor = connection.cursor(dictionary=True)
     try:
         connection.start_transaction()
         for wrong_response in wrong_responses_data:
