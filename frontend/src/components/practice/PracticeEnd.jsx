@@ -4,16 +4,33 @@ import { FaXmark, FaCheck } from 'react-icons/fa6';
 import { useQuestion } from '../../context/QuestionContext';
 import apiClient from '../../configs/apiClient';
 
-async function handleUpdateWrongResponses(wrongIds, setType) {
+async function handleUpdateWrongResponses(
+   questions,
+   userResponsesEvaluation,
+   setType
+) {
    const token = localStorage.getItem('token');
-   console.log(setType);
+   const correctIds = questions
+      .map((question, index) => {
+         if (userResponsesEvaluation[index]) {
+            return question.id;
+         }
+      })
+      .filter((id) => id !== undefined);
+   const wrongIds = questions
+      .map((question, index) => {
+         if (!userResponsesEvaluation[index]) {
+            return question.id;
+         }
+      })
+      .filter((id) => id !== undefined);
    if (setType === 'shuffle') {
       await apiClient.post('/wrong-responses', wrongIds, {
          headers: { Authorization: `Bearer ${token}` },
       });
    } else if (setType === 'wrong') {
       await apiClient.delete('/wrong-responses', {
-         data: wrongIds,
+         data: correctIds,
          headers: { Authorization: `Bearer ${token}` },
       });
    }
@@ -23,16 +40,9 @@ function PracticeEnd() {
    const { questions, setType, userResponses, userResponsesEvaluation } =
       useQuestion();
    const navigate = useNavigate();
-   const wrongIds = questions
-      .map((question, index) => {
-         if (!userResponsesEvaluation[index]) {
-            return question.id;
-         }
-      })
-      .filter((id) => id !== undefined);
 
    useEffect(() => {
-      handleUpdateWrongResponses(wrongIds, setType);
+      handleUpdateWrongResponses(questions, userResponsesEvaluation, setType);
    }, []);
 
    return (
