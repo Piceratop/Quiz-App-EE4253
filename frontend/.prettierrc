@@ -4,8 +4,5 @@
    "singleQuote": true,
    "printWidth": 80,
    "tabWidth": 3,
-   "useTabs": false,
-   "importOrder": ["^react", "^@", "^\\.", "^~/", "^[./]"],
-   "importOrderSeparation": true,
-   "importOrderSortSpecifiers": true
+   "useTabs": false
 }
