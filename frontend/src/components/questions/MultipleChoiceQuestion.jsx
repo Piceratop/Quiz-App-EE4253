@@ -1,7 +1,27 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { FaTrash } from 'react-icons/fa';
+import apiClient from '../../configs/apiClient';
+
+async function deleteQuestion(id, navigate) {
+   const token = localStorage.getItem('token');
+   try {
+      const response = await apiClient.delete(`/questions/${id}`, {
+         headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (response.status === 200) {
+         navigate('/explore');
+      }
+   } catch (error) {
+      console.error('Error deleting question:', error);
+   }
+}
 
 export default function MultipleChoiceQuestion({
+   id,
    correctAnswers,
+   deletable = false,
    playable = true,
    possibleAnswers,
    question,
@@ -21,13 +41,28 @@ export default function MultipleChoiceQuestion({
    const [isSubmitted, setIsSubmitted] = useState(!playable);
    const [userChoice, setUserChoice] = useState(null);
 
+   const navigate = useNavigate();
+
    return (
       <form className="my-6">
          <div className="my-2 border-primary border-2 transition duration-400 ease-in-out">
-            <div className="border-b border-primary">
-               <div className="text-sm px-1">
+            <div className="border-b border-primary flex items-center">
+               <div className="text-sm px-1 w-full">
                   Question Type: Multiple Choice
                </div>
+               {deletable && (
+                  <div className="text-sm px-1 flex items-center">
+                     <button
+                        className="opacity-50 hover:opacity-100 transition duration-400 ease-in-out"
+                        onClick={(e) => {
+                           e.preventDefault();
+                           deleteQuestion(id, navigate);
+                        }}
+                     >
+                        <FaTrash />
+                     </button>
+                  </div>
+               )}
             </div>
             <div className="text-2xl flex items-center justify-center py-12 px-4">
                <p className="text-center">{question}</p>

@@ -21,7 +21,7 @@ pool = MySQLConnectionPool(
     passwd=os.getenv("DB_PASSWORD"),
     database=os.getenv("DB_NAME"),
     port=int(os.getenv("DB_PORT")),
-    charset='utf8mb4',  
+    charset='utf8mb4',   
     use_unicode=True,   
     collation='utf8mb4_unicode_ci'  
 )
@@ -187,6 +187,26 @@ def add_question():
         
         connection.commit()
         return make_response(jsonify({'message': 'Question added successfully', 'question_id': question_id}), 201)
+    except Exception as e:
+        connection.rollback()
+        return make_response(jsonify({'error': str(e)}), 500)
+    finally:
+        mycursor.close()
+        connection.close()
+
+# Delete Question
+
+@app.route("/api/questions/<int:question_id>", methods=["DELETE"])
+@require_token
+def delete_question(question_id):
+    connection = pool.get_connection()
+    mycursor = connection.cursor()
+    try:
+        connection.start_transaction()
+        query = "DELETE FROM Questions WHERE id = %s AND created_by = %s"
+        mycursor.execute(query, (question_id, request.token_payload['user_id']))
+        connection.commit()
+        return make_response(jsonify({'message': 'Question deleted successfully'}), 200)
     except Exception as e:
         connection.rollback()
         return make_response(jsonify({'error': str(e)}), 500)

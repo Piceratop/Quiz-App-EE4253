@@ -71,6 +71,7 @@ function Explore() {
                   question.question_type === 'MCQ' && (
                      <MultipleChoiceQuestion
                         key={id}
+                        id={id}
                         question={question.question}
                         possibleAnswers={question.possible_answers}
                         correctAnswers={question.correct_answers}
