@@ -41,8 +41,8 @@ def get_questions():
         if request.args.get("search"):
             search_term = request.args.get("search")
             query += f" WHERE LOWER(question) LIKE LOWER('%{search_term}%')"
-        if request.args.get("user_id"):
-            user_id = request.args.get("user_id")
+        if request.args.get("user"):
+            user_id = request.args.get("user")
             query += f" WHERE created_by = {user_id}"
         if request.args.get("page"):
             page = int(request.args.get("page"))

@@ -20,15 +20,15 @@ INSERT INTO Questions (question, question_type, created_by) VALUES
 
 -- Insert answers with Unicode text and symbols
 INSERT INTO Answers (question_id, answer, correct) VALUES 
-(5, '≤', true),
-(5, '>', false),
-(5, '≥', false),
-(6, 'Earth', true),
-(6, 'Moon', false),
-(6, 'Sun', false),
-(7, '≈', true),
-(7, '=', false),
-(7, '~', false),
-(8, 'Love', true),
-(8, 'Hate', false),
-(8, 'Peace', false);
+(1, '≤', true),
+(1, '>', false),
+(1, '≥', false),
+(2, 'Earth', true),
+(2, 'Moon', false),
+(2, 'Sun', false),
+(3, '≈', true),
+(3, '=', false),
+(3, '~', false),
+(4, 'Love', true),
+(4, 'Hate', false),
+(4, 'Peace', false);

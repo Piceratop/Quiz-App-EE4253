@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import apiClient from '../configs/apiClient';
 import MultipleChoiceQuestion from './questions/MultipleChoiceQuestion';
 import SearchBar from './SearchBar';
+import Pagination from './Pagination';
 
 async function handleGetUserQuestions(id, page, search, setUserQuestions) {
    const token = localStorage.getItem('token');
@@ -84,7 +85,7 @@ function Profile() {
    useEffect(() => {
       setUsername(user);
       handleGetUserQuestions(id, page, search, setUserQuestions);
-   }, [user]);
+   }, [user, page, search]);
 
    const fieldsetStyle =
       'pb-2 px-2 mb-2 rounded-md border border-1 border-primary';
@@ -100,9 +101,10 @@ function Profile() {
                <legend className="px-1">Username</legend>
                <input
                   type="text"
-                  className="w-full bg-transparent outline-none"
+                  placeholder="Username"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
+                  className="w-full bg-transparent outline-none"
                />
             </fieldset>
             <button
@@ -190,17 +192,24 @@ function Profile() {
                setTotalPage={setTotalPage}
             />
             {Object.entries(userQuestions)
-               .sort(([, a], [, b]) => b - a)
-               .map(([key, value]) => (
-                  <MultipleChoiceQuestion
-                     key={key}
-                     correctAnswers={value.correct_answers}
-                     playable={false}
-                     possibleAnswers={value.possible_answers}
-                     question={value.question}
-                     shuffle={value.shuffle}
-                  />
-               ))}
+               .sort(([idA], [idB]) => parseInt(idB, 10) - parseInt(idA, 10))
+               .map(
+                  ([id, question]) =>
+                     question.question_type === 'MCQ' && (
+                        <MultipleChoiceQuestion
+                           key={id}
+                           question={question.question}
+                           possibleAnswers={question.possible_answers}
+                           correctAnswers={question.correct_answers}
+                           shuffle={question.shuffle}
+                        />
+                     )
+               )}
+            <Pagination 
+               page={page} 
+               setPage={setPage} 
+               totalPage={totalPage} 
+            />
          </div>
       </div>
    );
